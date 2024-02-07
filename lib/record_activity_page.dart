@@ -171,7 +171,7 @@ class _RecordActivityPageState extends State<RecordActivityPage> {
   Future<void> _getLocation() async {
     LocationPermission permission = await geolocator.requestPermission();
 
-    final LocationSettings locationSettings = LocationSettings(
+    const LocationSettings locationSettings = LocationSettings(
       accuracy: LocationAccuracy.best,
       distanceFilter: 0,
     );
@@ -181,18 +181,6 @@ class _RecordActivityPageState extends State<RecordActivityPage> {
         setState(() {
           currentPosition = position;
         });
-
-        // Access altitude and speed
-        double elevation = currentPosition?.altitude ?? 0.0;
-        double speed = currentPosition?.speed ?? 0.0;
-
-        print(position.altitudeAccuracy);
-        print(position.isMocked);
-        print(position.latitude);
-        print(position.longitude);
-
-        // Use elevation and speed data as needed
-        print('Elevation: $elevation, Speed: $speed');
       });
     }
   }
