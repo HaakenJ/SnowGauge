@@ -26,7 +26,7 @@ class _RecordActivityPageState extends State<RecordActivityPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Record Activity'),
+        title: const Text('Record Activity'),
       ),
       body: Center(
         child: Column(
@@ -35,9 +35,9 @@ class _RecordActivityPageState extends State<RecordActivityPage> {
             // Add our record activity  here
             Text(
               isRecording ? (isPaused ? 'Paused' : 'Recording...') : 'Not Recording',
-              style: TextStyle(fontSize: 24),
+              style: const TextStyle(fontSize: 24),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 // Toggle recording status
@@ -56,7 +56,7 @@ class _RecordActivityPageState extends State<RecordActivityPage> {
                 isRecording ? (isPaused ? 'Resume' : 'Pause') : 'Start Recording',
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () {
                 // Stop recording
@@ -68,67 +68,67 @@ class _RecordActivityPageState extends State<RecordActivityPage> {
                 // Show save or discard prompt
                 _showSaveDiscardPrompt();
               },
-              child: Text('Stop Recording'),
+              child: const Text('Stop Recording'),
             ),
-            GridView.count(
-              primary: false,
-              crossAxisCount: 2,
-              crossAxisSpacing: 5,
-              mainAxisSpacing: 5,
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              padding: const EdgeInsets.all(20),
-              children: <Widget>[
-                Container(
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.all(8),
-                  color: Colors.teal[100],
-                  child: Text(
-                    "Altitude \n\n ${currentPosition?.altitude ?? 0.0}",
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                Container(
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.all(8),
-                  color: Colors.teal[100],
-                  child: const Text("Number of Runs"),
-                ),
-                Container(
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.all(8),
-                  color: Colors.teal[100],
-                  child: Text(
-                    "Latitude \n\n ${currentPosition?.latitude ?? 0.0}",
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                Container(
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.all(8),
-                  color: Colors.teal[100],
-                  child: Text(
-                    "Longitude \n\n ${currentPosition?.longitude ?? 0.0}",
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                Container(
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.all(8),
-                  color: Colors.teal[100],
-                  child: Text(
-                    "Current Speed \n\n ${currentPosition?.speed ?? 0.0}",
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                Container(
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.all(8),
-                  color: Colors.teal[100],
-                  child: const Text("Maximum Speed"),
-                ),
-              ],
-            ),
+            // GridView.count(
+            //   primary: false,
+            //   crossAxisCount: 2,
+            //   crossAxisSpacing: 5,
+            //   mainAxisSpacing: 5,
+            //   scrollDirection: Axis.vertical,
+            //   shrinkWrap: true,
+            //   padding: const EdgeInsets.all(20),
+            //   children: <Widget>[
+            //     Container(
+            //       alignment: Alignment.center,
+            //       padding: const EdgeInsets.all(8),
+            //       color: Colors.teal[100],
+            //       child: Text(
+            //         "Altitude \n\n ${currentPosition?.altitude ?? 0.0}",
+            //         textAlign: TextAlign.center,
+            //       ),
+            //     ),
+            //     Container(
+            //       alignment: Alignment.center,
+            //       padding: const EdgeInsets.all(8),
+            //       color: Colors.teal[100],
+            //       child: const Text("Number of Runs"),
+            //     ),
+            //     Container(
+            //       alignment: Alignment.center,
+            //       padding: const EdgeInsets.all(8),
+            //       color: Colors.teal[100],
+            //       child: Text(
+            //         "Latitude \n\n ${currentPosition?.latitude ?? 0.0}",
+            //         textAlign: TextAlign.center,
+            //       ),
+            //     ),
+            //     Container(
+            //       alignment: Alignment.center,
+            //       padding: const EdgeInsets.all(8),
+            //       color: Colors.teal[100],
+            //       child: Text(
+            //         "Longitude \n\n ${currentPosition?.longitude ?? 0.0}",
+            //         textAlign: TextAlign.center,
+            //       ),
+            //     ),
+            //     Container(
+            //       alignment: Alignment.center,
+            //       padding: const EdgeInsets.all(8),
+            //       color: Colors.teal[100],
+            //       child: Text(
+            //         "Current Speed \n\n ${currentPosition?.speed ?? 0.0}",
+            //         textAlign: TextAlign.center,
+            //       ),
+            //     ),
+            //     Container(
+            //       alignment: Alignment.center,
+            //       padding: const EdgeInsets.all(8),
+            //       color: Colors.teal[100],
+            //       child: const Text("Maximum Speed"),
+            //     ),
+            //   ],
+            // ),
           ],
         ),
       ),
@@ -141,8 +141,8 @@ class _RecordActivityPageState extends State<RecordActivityPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Save Recording?'),
-          content: Text('Do you want to save or discard the recording?'),
+          title: const Text('Save Recording?'),
+          content: const Text('Do you want to save or discard the recording?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -150,7 +150,7 @@ class _RecordActivityPageState extends State<RecordActivityPage> {
                 Navigator.pop(context);
                 _showConfirmation('Recording Discarded!');
               },
-              child: Text('Discard'),
+              child: const Text('Discard'),
             ),
             TextButton(
               onPressed: () {
@@ -159,7 +159,7 @@ class _RecordActivityPageState extends State<RecordActivityPage> {
                 _saveRecordingData();
                 _navigateToHistoryPage();
               },
-              child: Text('Save'),
+              child: const Text('Save'),
             ),
           ],
         );
@@ -208,7 +208,7 @@ class _RecordActivityPageState extends State<RecordActivityPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirmation'),
+          title: const Text('Confirmation'),
           content: Text(message),
           actions: [
             TextButton(
@@ -216,7 +216,7 @@ class _RecordActivityPageState extends State<RecordActivityPage> {
                 // Handling OK action and navigate to another page
                 Navigator.pop(context);
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );
