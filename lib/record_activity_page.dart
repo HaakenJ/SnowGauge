@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'history_page.dart'; // Import the history page
+import 'package:geolocator/geolocator.dart';
 
 class RecordActivityPage extends StatefulWidget {
   const RecordActivityPage({super.key});
@@ -12,6 +13,14 @@ class _RecordActivityPageState extends State<RecordActivityPage> {
   bool isRecording = false;
   bool isPaused = false;
   List<String> recordingData = []; // here I used simple data structure to store recording data
+  GeolocatorPlatform geolocator = GeolocatorPlatform.instance;
+  Position? currentPosition;
+
+  @override
+  void initState() {
+    super.initState();
+    _getLocation();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +30,7 @@ class _RecordActivityPageState extends State<RecordActivityPage> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             // Add our record activity  here
             Text(
@@ -61,6 +70,65 @@ class _RecordActivityPageState extends State<RecordActivityPage> {
               },
               child: Text('Stop Recording'),
             ),
+            GridView.count(
+              primary: false,
+              crossAxisCount: 2,
+              crossAxisSpacing: 5,
+              mainAxisSpacing: 5,
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              padding: const EdgeInsets.all(20),
+              children: <Widget>[
+                Container(
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.all(8),
+                  color: Colors.teal[100],
+                  child: Text(
+                    "Altitude \n\n ${currentPosition?.altitude ?? 0.0}",
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.all(8),
+                  color: Colors.teal[100],
+                  child: const Text("Number of Runs"),
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.all(8),
+                  color: Colors.teal[100],
+                  child: Text(
+                    "Latitude \n\n ${currentPosition?.latitude ?? 0.0}",
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.all(8),
+                  color: Colors.teal[100],
+                  child: Text(
+                    "Longitude \n\n ${currentPosition?.longitude ?? 0.0}",
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.all(8),
+                  color: Colors.teal[100],
+                  child: Text(
+                    "Current Speed \n\n ${currentPosition?.speed ?? 0.0}",
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.all(8),
+                  color: Colors.teal[100],
+                  child: const Text("Maximum Speed"),
+                ),
+              ],
+            ),
           ],
         ),
       ),
@@ -97,6 +165,36 @@ class _RecordActivityPageState extends State<RecordActivityPage> {
         );
       },
     );
+  }
+
+  // Function to get the current location data
+  Future<void> _getLocation() async {
+    LocationPermission permission = await geolocator.requestPermission();
+
+    final LocationSettings locationSettings = LocationSettings(
+      accuracy: LocationAccuracy.best,
+      distanceFilter: 0,
+    );
+
+    if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
+      geolocator.getPositionStream(locationSettings: locationSettings).listen((Position position) {
+        setState(() {
+          currentPosition = position;
+        });
+
+        // Access altitude and speed
+        double elevation = currentPosition?.altitude ?? 0.0;
+        double speed = currentPosition?.speed ?? 0.0;
+
+        print(position.altitudeAccuracy);
+        print(position.isMocked);
+        print(position.latitude);
+        print(position.longitude);
+
+        // Use elevation and speed data as needed
+        print('Elevation: $elevation, Speed: $speed');
+      });
+    }
   }
 
   // Function to save recording data

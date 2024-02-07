@@ -21,7 +21,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       // Redirect to LoginPage initially
-      home: const LoginPage(),
+      home: RecordActivityPage(),
+      // home: const LoginPage(),
       routes: {
         '/login': (context) => LoginPage(),
         '/register': (context) => RegistrationPage(),
