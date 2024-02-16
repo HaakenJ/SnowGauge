@@ -1,5 +1,9 @@
+import 'package:SnowGauge/view_models/recording_view_model.dart';
+import 'package:SnowGauge/view_models/user_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'dao/recording_dao.dart';
+import 'dao/user_dao.dart';
 import 'views/login_view.dart';
 import 'views/registration_view.dart';
 import 'views/leaderboard_view.dart';
@@ -8,6 +12,7 @@ import 'views/user_account_view.dart';
 import 'views/record_activity_view.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:SnowGauge/common/theme.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -33,15 +38,15 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       // Redirect to LoginPage initially
-      home: const RecordActivityPage(),
+      home: const RecordActivityView(),
       // home: const LoginPage(),
       routes: {
-        '/login': (context) => LoginPage(),
-        '/register': (context) => RegistrationPage(),
-        '/leaderboard': (context) => LeaderboardPage(),
-        '/history': (context) => HistoryPage(),
-        '/user_account': (context) => const UserAccountPage(),
-        '/record_activity': (context) => RecordActivityPage(),
+        '/login': (context) => LoginView(),
+        '/register': (context) => RegistrationView(),
+        '/leaderboard': (context) => LeaderboardView(),
+        '/history': (context) => HistoryView(),
+        '/user_account': (context) => const UserAccountView(),
+        '/record_activity': (context) => RecordActivityView(),
       },
     );
   }
@@ -60,21 +65,21 @@ void main() {
     return GetIt.instance.get<SnowGaugeDatabase>().userDao;
   }, dependsOn: [SnowGaugeDatabase]);
 
-  // register location dao
-  getIt.registerSingletonWithDependencies<LocationDao>(() {
-    return GetIt.instance.get<SnowGaugeDatabase>().locationDao;
+  // register recording dao
+  getIt.registerSingletonWithDependencies<RecordingDao>(() {
+    return GetIt.instance.get<SnowGaugeDatabase>().recordingDao;
   }, dependsOn: [SnowGaugeDatabase]);
 
-  // register UserModel
-  getIt.registerSingletonWithDependencies<UserModelView>(
+  // register UserViewModel
+  getIt.registerSingletonWithDependencies<UserViewModel>(
           () => UserModelView(),
       dependsOn: [SnowGaugeDatabase, UserDao]
   );
 
-  // register LocationModelView
-  getIt.registerSingletonWithDependencies<LocationModelView>(
-          () => LocationModelView(),
-      dependsOn: [SnowGaugeDatabase, LocationDao]
+  // register RecordingViewModel
+  getIt.registerSingletonWithDependencies<RecordingViewModel>(
+          () => RecordingViewModel(),
+      dependsOn: [SnowGaugeDatabase, RecordingDao]
   );
 
   runApp(const MyApp());
@@ -128,7 +133,7 @@ GoRouter router() {
                   parentNavigatorKey: _shellNavigatorKey,
                   pageBuilder: (context, state) {
                     return const NoTransitionPage(
-                      child: HistoryView()),
+                      child: HistoryView(),
                     );
                   }
               ),
@@ -149,7 +154,7 @@ GoRouter router() {
           pageBuilder: (context, state) {
             return NoTransitionPage(
               key: UniqueKey(),
-              child: LoginView(),
+              child: const LoginView(),
             );
           },
         ),
@@ -159,7 +164,7 @@ GoRouter router() {
           pageBuilder: (context, state) {
             return NoTransitionPage(
               key: UniqueKey(),
-              child: RegistrationView(),
+              child: const RegistrationView(),
             );
           },
         ),
