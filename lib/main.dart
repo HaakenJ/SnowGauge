@@ -59,7 +59,7 @@ void main() {
 
   // register database with getIt
   getIt.registerSingletonAsync<SnowGaugeDatabase>(
-      () async => $FloorAppDatabase.databaseBuilder('snow_gauge_database').build();
+      () async => $FloorAppDatabase.databaseBuilder('snow_gauge_database').build()
   );
 
   // register userDao
