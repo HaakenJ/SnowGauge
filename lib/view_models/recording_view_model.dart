@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
 
-class LocationViewModel extends ChangeNotifier {
+class RecordingViewModel extends ChangeNotifier {
 
 }
