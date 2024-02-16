@@ -1,5 +1,6 @@
 import 'package:SnowGauge/view_models/recording_view_model.dart';
 import 'package:SnowGauge/view_models/user_view_model.dart';
+import 'package:SnowGauge/views/scaffold_nav_bar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'dao/recording_dao.dart';
@@ -95,7 +96,7 @@ GoRouter router() {
             navigatorKey: _shellNavigatorKey,
             pageBuilder: (context, state, child) {
               return NoTransitionPage(
-                  child: ScaffoldWithNavBar(
+                  child: ScaffoldNavBar(
                     location: state.matchedLocation,
                     child: child,
                   )
