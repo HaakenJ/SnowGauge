@@ -4,6 +4,8 @@ import 'dao/user_dao.dart';
 import 'entities/recording_entity.dart';
 import 'entities/user_entity.dart';
 import 'utilities/datetime_converter.dart';
+import 'package:sqflite/sqflite.dart' as sqflite;
+import 'dart:async';
 
 part 'database.g.dart'; // the generated code will be there
 
