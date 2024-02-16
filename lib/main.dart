@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'dao/recording_dao.dart';
 import 'dao/user_dao.dart';
+import 'database.dart';
 import 'views/login_view.dart';
 import 'views/registration_view.dart';
 import 'views/leaderboard_view.dart';
