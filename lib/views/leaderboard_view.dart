@@ -3,8 +3,8 @@ import 'history_view.dart';
 import 'user_account_view.dart';
 import 'record_activity_view.dart';
 
-class LeaderboardPage extends StatelessWidget {
-  const LeaderboardPage({super.key});
+class LeaderboardView extends StatelessWidget {
+  const LeaderboardView({super.key});
 
   @override
   Widget build(BuildContext context) {

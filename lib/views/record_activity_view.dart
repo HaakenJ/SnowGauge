@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'history_view.dart'; // Import the history page
 import 'package:geolocator/geolocator.dart';
 
-class RecordActivityPage extends StatefulWidget {
-  const RecordActivityPage({super.key});
+class RecordActivityView extends StatefulWidget {
+  const RecordActivityView({super.key});
 
   @override
-  _RecordActivityPageState createState() => _RecordActivityPageState();
+  _RecordActivityViewState createState() => _RecordActivityViewState();
 }
 
-class _RecordActivityPageState extends State<RecordActivityPage> {
+class _RecordActivityViewState extends State<RecordActivityView> {
   bool isRecording = false;
   bool isPaused = false;
   List<String> recordingData = []; // here I used simple data structure to store recording data
@@ -197,7 +197,7 @@ class _RecordActivityPageState extends State<RecordActivityPage> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => HistoryPage(data: recordingData),
+        builder: (context) => HistoryView(data: recordingData),
       ),
     );
   }

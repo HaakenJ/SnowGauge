@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import '../services/registration_service.dart';
 
-class RegistrationPage extends StatefulWidget {
-  const RegistrationPage({super.key});
+class RegistrationView extends StatefulWidget {
+  const RegistrationView({super.key});
 
   @override
-  _RegistrationPageState createState() => _RegistrationPageState();
+  _RegistrationViewState createState() => _RegistrationViewState();
 }
 
-class _RegistrationPageState extends State<RegistrationPage> {
+class _RegistrationViewState extends State<RegistrationView> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();

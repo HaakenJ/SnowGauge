@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class HistoryPage extends StatelessWidget {
+class HistoryView extends StatelessWidget {
   final List<String> data;
 
-  const HistoryPage({super.key,  this.data = const []});
+  const HistoryView({super.key,  this.data = const []});
 
   @override
   Widget build(BuildContext context) {
