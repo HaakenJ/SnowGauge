@@ -73,7 +73,7 @@ void main() {
 
   // register UserViewModel
   getIt.registerSingletonWithDependencies<UserViewModel>(
-          () => UserModelView(),
+          () => UserViewModel(),
       dependsOn: [SnowGaugeDatabase, UserDao]
   );
 
