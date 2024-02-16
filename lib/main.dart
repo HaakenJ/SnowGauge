@@ -1,20 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'login_page.dart';
 import 'registration_page.dart';
 import 'leaderboard_page.dart';
 import 'history_page.dart';
 import 'user_account_page.dart';
 import 'record_activity_page.dart';
+import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+final _rootNavigatorKey = GlobalKey<NavigatorState>();
+final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        // ChangeNotifierProvider(create: (context) => LocationModel()),
+      ],
+      child: MaterialApp.router(
+        title: 'SnowGauge',
+        theme: appTheme,
+        routerConfig: router(),
+      )
+    );
     return MaterialApp(
       title: 'Snow Gauge App',
       theme: ThemeData(
@@ -33,4 +45,124 @@ class MyApp extends StatelessWidget {
       },
     );
   }
+}
+
+void main() {
+  GetIt getIt = GetIt.instance;
+
+  // register database with getIt
+  getIt.registerSingletonAsync<SnowGaugeDatabase>(
+      () async => $FloorAppDatabase.databaseBuilder('snow_gauge_database').build();
+  );
+
+  // register userDao
+  getIt.registerSingletonWithDependencies<UserDao>(() {
+    return GetIt.instance.get<SnowGaugeDatabase>().userDao;
+  }, dependsOn: [SnowGaugeDatabase]);
+
+  // register location dao
+  getIt.registerSingletonWithDependencies<LocationDao>(() {
+    return GetIt.instance.get<SnowGaugeDatabase>().locationDao;
+  }, dependsOn: [SnowGaugeDatabase]);
+
+  // register UserModel
+  getIt.registerSingletonWithDependencies<UserModelView>(
+          () => UserModelView(),
+      dependsOn: [SnowGaugeDatabase, UserDao]
+  );
+
+  // register LocationModelView
+  getIt.registerSingletonWithDependencies<LocationModelView>(
+          () => LocationModelView(),
+      dependsOn: [SnowGaugeDatabase, LocationDao]
+  );
+
+  runApp(const MyApp());
+}
+
+GoRouter router() {
+  return GoRouter(
+      initialLocation: '/login',
+      navigatorKey: _rootNavigatorKey,
+      routes: [
+        ShellRoute(
+            navigatorKey: _shellNavigatorKey,
+            pageBuilder: (context, state, child) {
+              return NoTransitionPage(
+                  child: ScaffoldWithNavBar(
+                    location: state.matchedLocation,
+                    child: child,
+                  )
+              );
+            },
+            routes: [
+              GoRoute(
+                  path: '/record-activity',
+                  parentNavigatorKey: _shellNavigatorKey,
+                  pageBuilder: (context, state) {
+                    return NoTransitionPage(
+                        child: FutureBuilder(
+                            future: GetIt.instance.allReady(),
+                            builder: (BuildContext context, AsyncSnapshot snapshot) {
+                              if (snapshot.hasData) {
+                                return const RecordActivityView();
+                              } else {
+                                return const Center(child: CircularProgressIndicator());
+                              }
+                            }
+                        )
+                    );
+                  }
+              ),
+              GoRoute(
+                  path: '/leaderboard',
+                  parentNavigatorKey: _shellNavigatorKey,
+                  pageBuilder: (context, state) {
+                    return const NoTransitionPage(
+                      child: LeaderboardView(),
+                    );
+                  }
+              ),
+              GoRoute(
+                  path: '/history',
+                  parentNavigatorKey: _shellNavigatorKey,
+                  pageBuilder: (context, state) {
+                    return const NoTransitionPage(
+                      child: HistoryView()),
+                    );
+                  }
+              ),
+              GoRoute(
+                  path: '/user-account',
+                  parentNavigatorKey: _shellNavigatorKey,
+                  pageBuilder: (context, state) {
+                    return const NoTransitionPage(
+                      child: UserAccountView(),
+                    );
+                  }
+              ),
+            ]
+        ),
+        GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
+          path: '/login',
+          pageBuilder: (context, state) {
+            return NoTransitionPage(
+              key: UniqueKey(),
+              child: LoginView(),
+            );
+          },
+        ),
+        GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
+          path: '/register',
+          pageBuilder: (context, state) {
+            return NoTransitionPage(
+              key: UniqueKey(),
+              child: RegistrationView(),
+            );
+          },
+        ),
+      ]
+  );
 }
