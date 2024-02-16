@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'history_page.dart'; // Import the history page
+import 'history_view.dart'; // Import the history page
 import 'package:geolocator/geolocator.dart';
 
 class RecordActivityPage extends StatefulWidget {

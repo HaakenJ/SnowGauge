@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'login_page.dart';
-import 'registration_page.dart';
-import 'leaderboard_page.dart';
-import 'history_page.dart';
-import 'user_account_page.dart';
-import 'record_activity_page.dart';
+import 'views/login_view.dart';
+import 'views/registration_view.dart';
+import 'views/leaderboard_view.dart';
+import 'views/history_view.dart';
+import 'views/user_account_view.dart';
+import 'views/record_activity_view.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 

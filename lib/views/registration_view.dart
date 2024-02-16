@@ -1,30 +1,36 @@
 import 'package:flutter/material.dart';
-import 'auth_service.dart';
+import '../services/registration_service.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class RegistrationPage extends StatefulWidget {
+  const RegistrationPage({super.key});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _RegistrationPageState createState() => _RegistrationPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegistrationPageState extends State<RegistrationPage> {
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  AuthService _authService = AuthService();
+  RegistrationService _registrationService = RegistrationService();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: Text('Register'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            TextField(
+              controller: _nameController,
+              decoration: InputDecoration(labelText: 'Name'),
+            ),
+            SizedBox(height: 10),
             TextField(
               controller: _emailController,
               decoration: InputDecoration(labelText: 'Email'),
@@ -38,28 +44,29 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                // We need to implement login logic
+                // Implement our registration logic here
+                String name = _nameController.text;
                 String email = _emailController.text;
                 String password = _passwordController.text;
 
-                bool success = await _authService.login(email, password);
+                bool success = await _registrationService.register(name, email, password);
 
                 if (success) {
-                  // Navigate to LeaderboardPage on successful login
+                  // Navigate to LeaderboardPage on successful registration
                   Navigator.pushReplacementNamed(context, '/leaderboard');
                 } else {
-                  // if login failed we need to show an error message
+                  // Handle failed registration, show an error message, etc.
                 }
               },
-              child: Text('Login'),
+              child: Text('Register'),
             ),
             SizedBox(height: 10),
             TextButton(
               onPressed: () {
-                // Navigate to registration page
-                Navigator.pushNamed(context, '/register');
+                // Navigate back to login page
+                Navigator.pushReplacementNamed(context, '/login');
               },
-              child: Text('Don\'t have an account? Register here.'),
+              child: Text('Already have an account? Login here.'),
             ),
           ],
         ),
