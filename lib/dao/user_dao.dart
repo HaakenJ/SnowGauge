@@ -17,12 +17,6 @@ abstract class UserDao {
   @Query('SELECT id FROM User WHERE user_name = :userName')
   Future<int?> getUserIdByName(String userName);
 
-  @Query('SELECT password FROM User WHERE id = :id')
-  Future<String?> getPasswordById(int id);
-
-  @Query('SELECT email FROM User WHERE id = :id')
-  Future<String?> getEmailById(int id);
-
   // Update
   @Update(onConflict: OnConflictStrategy.replace)
   Future<void> updateUser(User user);

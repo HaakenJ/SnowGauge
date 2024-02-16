@@ -10,7 +10,7 @@ import 'package:floor/floor.dart';
     )
   ],
 )
-class Location {
+class Recording {
   @primaryKey
   final int id;
   @ColumnInfo(name: 'user_id')
@@ -34,7 +34,7 @@ class Location {
   // probably stored in milliseconds to be converted later
   double duration;
 
-  Location(
+  Recording(
       this.id,
       this.userId,
       this.recordingDate,
