@@ -13,7 +13,7 @@ abstract class RecordingDao {
 
   @Query('SELECT * FROM Recording WHERE id = :id')
   Stream<Recording?> watchRecordingById(int id);
-  
+
   // Update
   @Update(onConflict: OnConflictStrategy.replace)
   Future<void> updateRecording(Recording user);
