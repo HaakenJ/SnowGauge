@@ -11,7 +11,7 @@ import 'views/registration_view.dart';
 import 'views/leaderboard_view.dart';
 import 'views/history_view.dart';
 import 'views/user_account_view.dart';
-import 'views/record_activity_view.dart';
+import 'views/recording_view.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:SnowGauge/common/theme.dart';

@@ -1,4 +1,6 @@
+import 'package:SnowGauge/view_models/recording_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'history_view.dart'; // Import the history page
 import 'package:geolocator/geolocator.dart';
 
@@ -13,8 +15,7 @@ class _RecordActivityViewState extends State<RecordActivityView> {
   bool isRecording = false;
   bool isPaused = false;
   List<String> recordingData = []; // here I used simple data structure to store recording data
-  GeolocatorPlatform geolocator = GeolocatorPlatform.instance;
-  Position? currentPosition;
+
 
   @override
   void initState() {
@@ -24,6 +25,8 @@ class _RecordActivityViewState extends State<RecordActivityView> {
 
   @override
   Widget build(BuildContext context) {
+    final recordingProvider = Provider.of<RecordingViewModel>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Record Activity'),
@@ -43,9 +46,15 @@ class _RecordActivityViewState extends State<RecordActivityView> {
                 // Toggle recording status
                 setState(() {
                   if (!isRecording) {
-                    // Start recording
-                    isRecording = true;
-                    isPaused = false;
+                    if (!recordingProvider.permissionGranted) {
+                      recordingProvider.requestPermission();
+                    }
+
+                    if (recordingProvider.permissionGranted) {
+                      // Start recording
+                      isRecording = true;
+                      isPaused = false;
+                    }
                   } else {
                     // Pause recording
                     isPaused = !isPaused;
@@ -165,24 +174,6 @@ class _RecordActivityViewState extends State<RecordActivityView> {
         );
       },
     );
-  }
-
-  // Function to get the current location data
-  Future<void> _getLocation() async {
-    LocationPermission permission = await geolocator.requestPermission();
-
-    const LocationSettings locationSettings = LocationSettings(
-      accuracy: LocationAccuracy.best,
-      distanceFilter: 0,
-    );
-
-    if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
-      geolocator.getPositionStream(locationSettings: locationSettings).listen((Position position) {
-        setState(() {
-          currentPosition = position;
-        });
-      });
-    }
   }
 
   // Function to save recording data

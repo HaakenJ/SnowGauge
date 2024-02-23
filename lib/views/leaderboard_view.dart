@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'history_view.dart';
 import 'user_account_view.dart';
-import 'record_activity_view.dart';
+import 'recording_view.dart';
 
 class LeaderboardView extends StatelessWidget {
   const LeaderboardView({super.key});

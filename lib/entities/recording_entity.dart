@@ -20,19 +20,23 @@ class Recording {
   DateTime recordingDate;
   @ColumnInfo(name: 'number_of_runs')
   int numberOfRuns;
-  // speed stored in mph
+  // speed stored in km/h
   @ColumnInfo(name: 'max_speed')
   double maxSpeed;
   @ColumnInfo(name: 'average_speed')
   double averageSpeed;
-  // stored in miles
+  // stored in meters
   @ColumnInfo(name: 'total_distance')
   double totalDistance;
-  // stored in ft
+  // stored in meters
   @ColumnInfo(name: 'total_vertical')
-  int totalVertical;
-  // probably stored in milliseconds to be converted later
-  double duration;
+  double totalVertical;
+  @ColumnInfo(name: 'max_elevation')
+  double maxElevation;
+  @ColumnInfo(name: 'min_elevation')
+  double minElevation;
+  // stored in whole seconds
+  int duration;
 
   Recording(
       this.id,
@@ -43,6 +47,8 @@ class Recording {
       this.averageSpeed,
       this.totalDistance,
       this.totalVertical,
+      this.maxElevation,
+      this.minElevation,
       this.duration
       );
 }
