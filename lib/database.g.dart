@@ -89,7 +89,7 @@ class _$SnowGaugeDatabase extends SnowGaugeDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `User` (`id` INTEGER NOT NULL, `user_name` TEXT NOT NULL, `email` TEXT NOT NULL, `password` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Recording` (`id` INTEGER NOT NULL, `user_id` INTEGER NOT NULL, `recording_date` INTEGER NOT NULL, `number_of_runs` INTEGER NOT NULL, `max_speed` REAL NOT NULL, `average_speed` REAL NOT NULL, `total_distance` REAL NOT NULL, `total_vertical` INTEGER NOT NULL, `duration` REAL NOT NULL, FOREIGN KEY (`user_id`) REFERENCES `User` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `Recording` (`id` INTEGER NOT NULL, `user_id` INTEGER NOT NULL, `recording_date` INTEGER NOT NULL, `number_of_runs` INTEGER NOT NULL, `max_speed` REAL NOT NULL, `average_speed` REAL NOT NULL, `total_distance` REAL NOT NULL, `total_vertical` REAL NOT NULL, `max_elevation` REAL NOT NULL, `min_elevation` REAL NOT NULL, `duration` INTEGER NOT NULL, FOREIGN KEY (`user_id`) REFERENCES `User` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -222,6 +222,8 @@ class _$RecordingDao extends RecordingDao {
                   'average_speed': item.averageSpeed,
                   'total_distance': item.totalDistance,
                   'total_vertical': item.totalVertical,
+                  'max_elevation': item.maxElevation,
+                  'min_elevation': item.minElevation,
                   'duration': item.duration
                 },
             changeListener),
@@ -239,6 +241,8 @@ class _$RecordingDao extends RecordingDao {
                   'average_speed': item.averageSpeed,
                   'total_distance': item.totalDistance,
                   'total_vertical': item.totalVertical,
+                  'max_elevation': item.maxElevation,
+                  'min_elevation': item.minElevation,
                   'duration': item.duration
                 },
             changeListener),
@@ -256,6 +260,8 @@ class _$RecordingDao extends RecordingDao {
                   'average_speed': item.averageSpeed,
                   'total_distance': item.totalDistance,
                   'total_vertical': item.totalVertical,
+                  'max_elevation': item.maxElevation,
+                  'min_elevation': item.minElevation,
                   'duration': item.duration
                 },
             changeListener);
@@ -283,8 +289,10 @@ class _$RecordingDao extends RecordingDao {
             row['max_speed'] as double,
             row['average_speed'] as double,
             row['total_distance'] as double,
-            row['total_vertical'] as int,
-            row['duration'] as double));
+            row['total_vertical'] as double,
+            row['max_elevation'] as double,
+            row['min_elevation'] as double,
+            row['duration'] as int));
   }
 
   @override
@@ -298,8 +306,10 @@ class _$RecordingDao extends RecordingDao {
             row['max_speed'] as double,
             row['average_speed'] as double,
             row['total_distance'] as double,
-            row['total_vertical'] as int,
-            row['duration'] as double),
+            row['total_vertical'] as double,
+            row['max_elevation'] as double,
+            row['min_elevation'] as double,
+            row['duration'] as int),
         arguments: [id],
         queryableName: 'Recording',
         isView: false);

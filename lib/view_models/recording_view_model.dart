@@ -15,6 +15,7 @@ import '../entities/user_entity.dart';
  */
 class RecordingViewModel extends ChangeNotifier {
   bool isRecording = false;
+  bool isPaused = false;
 
   // ELEVATION VARIABLES
   bool _isGoingDown = false;
@@ -28,6 +29,7 @@ class RecordingViewModel extends ChangeNotifier {
   // SPEED/DISTANCE VARIABLES
   double maxSpeed = 0.0;
   Position? previousPosition;
+  DateTime? previousTime;
 
   // TIME VARIABLES
   int totalTime = 0;
@@ -37,13 +39,17 @@ class RecordingViewModel extends ChangeNotifier {
   late Position _currentPosition;
   late Recording record;
   late RecordingDao recordingDao;
-  int userId;
+  late int _userId;
 
-  RecordingViewModel(this.userId) {
+  RecordingViewModel() {
+    recordingDao = GetIt.instance.get<RecordingDao>();
+  }
+
+  void _initializeRecording() {
     // initialize a new recording
     record = Recording(
         IdGenerator.generateId(),  // id
-        userId,                    // userId
+        _userId,                    // userId
         DateTime.now(),            // recordingDate
         0,                         // numberOfRuns
         0.0,                       // maxSpeed
@@ -54,10 +60,7 @@ class RecordingViewModel extends ChangeNotifier {
         0,                         // minElevation
         0                          // duration
     );
-    recordingDao = GetIt.instance.get<RecordingDao>();
   }
-
-
 
   Future<void> requestPermission() async {
     LocationPermission permission = await _geolocator.requestPermission();
@@ -70,24 +73,66 @@ class RecordingViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void startRecording() {
+  void startRecording(int userId) {
+    isRecording = true;
+    _userId = userId;
+    _initializeRecording();
+
     const LocationSettings locationSettings = LocationSettings(
       accuracy: LocationAccuracy.best,
-      distanceFilter: 0,
+      distanceFilter: 0, // number of meters the user must move to update location
     );
 
     // set the date of the recording
     record.recordingDate = DateTime.now();
 
     _geolocator.getPositionStream(locationSettings: locationSettings).listen((Position position) {
-      _currentPosition = position;
-      _updateElevation(position);
-      _updateSpeed(position);
+      if (isRecording && !isPaused) {
+        _currentPosition = position;
+        _updateElevation(position);
+        _updateSpeed(position);
+        print('Current info: number runs: ${record.numberOfRuns}\n'
+            'max speed: ${record.maxSpeed}\n'
+            'average speed: ${record.averageSpeed}\n'
+            'total distance: ${record.totalDistance}\n'
+            'total descent: ${record.totalVertical}\n'
+            'total time: ${record.duration}');
+      } else if (isRecording && isPaused) {
+        previousTime = DateTime.now();
+      }
     });
+    notifyListeners();
   }
 
   void stopRecording() {
     isRecording = false;
+    notifyListeners();
+  }
+
+  void togglePause() {
+    if (isPaused) {
+      isPaused = false;
+    } else {
+      isPaused = true;
+    }
+    notifyListeners();
+  }
+
+  void discardRecording() {
+    _initializeRecording();
+    notifyListeners();
+  }
+
+  void saveRecording() {
+    recordingDao.insertRecording(record);
+    print('Record saved: \n'
+      'number runs: ${record.numberOfRuns}\n'
+      'max speed: ${record.maxSpeed}\n'
+      'average speed: ${record.averageSpeed}\n'
+      'total distance: ${record.totalDistance}\n'
+      'total descent: ${record.totalVertical}');
+    _initializeRecording();
+    notifyListeners();
   }
 
   void _updateElevation(Position pos) {
@@ -131,7 +176,7 @@ class RecordingViewModel extends ChangeNotifier {
     }
 
     // update total distance and time
-    if (previousPosition != null) {
+    if (previousPosition != null && previousTime != null) {
       double distance = Geolocator.distanceBetween(
           previousPosition!.latitude,
           previousPosition!.longitude,
@@ -142,12 +187,9 @@ class RecordingViewModel extends ChangeNotifier {
       record.duration += pos.timestamp.difference(previousPosition!.timestamp).inSeconds;
     }
     previousPosition = pos;
+    previousTime = previousPosition!.timestamp;
 
     // update average speed
     record.averageSpeed = record.duration > 0 ? record.totalDistance / record.duration : 0.0;
-  }
-
-  void saveRecord() {
-
   }
 }

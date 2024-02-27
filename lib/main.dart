@@ -26,7 +26,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // ChangeNotifierProvider(create: (context) => LocationModel()),
+        ChangeNotifierProvider(create: (context) => RecordingViewModel()),
+        ChangeNotifierProvider(create: (context) => UserViewModel()),
       ],
       child: MaterialApp.router(
         title: 'SnowGauge',
@@ -89,7 +90,7 @@ void main() {
 
 GoRouter router() {
   return GoRouter(
-      initialLocation: '/login',
+      initialLocation: '/record-activity',
       navigatorKey: _rootNavigatorKey,
       routes: [
         ShellRoute(
