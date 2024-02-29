@@ -1,4 +1,5 @@
 import 'package:SnowGauge/view_models/recording_view_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../entities/user_entity.dart';
@@ -84,65 +85,82 @@ class _RecordActivityViewState extends State<RecordActivityView> {
                 },
                 child: const Text('Stop Recording'),
               ),
-              // GridView.count(
-              //   primary: false,
-              //   crossAxisCount: 2,
-              //   crossAxisSpacing: 5,
-              //   mainAxisSpacing: 5,
-              //   scrollDirection: Axis.vertical,
-              //   shrinkWrap: true,
-              //   padding: const EdgeInsets.all(20),
-              //   children: <Widget>[
-              //     Container(
-              //       alignment: Alignment.center,
-              //       padding: const EdgeInsets.all(8),
-              //       color: Colors.teal[100],
-              //       child: Text(
-              //         "Altitude \n\n ${currentPosition?.altitude ?? 0.0}",
-              //         textAlign: TextAlign.center,
-              //       ),
-              //     ),
-              //     Container(
-              //       alignment: Alignment.center,
-              //       padding: const EdgeInsets.all(8),
-              //       color: Colors.teal[100],
-              //       child: const Text("Number of Runs"),
-              //     ),
-              //     Container(
-              //       alignment: Alignment.center,
-              //       padding: const EdgeInsets.all(8),
-              //       color: Colors.teal[100],
-              //       child: Text(
-              //         "Latitude \n\n ${currentPosition?.latitude ?? 0.0}",
-              //         textAlign: TextAlign.center,
-              //       ),
-              //     ),
-              //     Container(
-              //       alignment: Alignment.center,
-              //       padding: const EdgeInsets.all(8),
-              //       color: Colors.teal[100],
-              //       child: Text(
-              //         "Longitude \n\n ${currentPosition?.longitude ?? 0.0}",
-              //         textAlign: TextAlign.center,
-              //       ),
-              //     ),
-              //     Container(
-              //       alignment: Alignment.center,
-              //       padding: const EdgeInsets.all(8),
-              //       color: Colors.teal[100],
-              //       child: Text(
-              //         "Current Speed \n\n ${currentPosition?.speed ?? 0.0}",
-              //         textAlign: TextAlign.center,
-              //       ),
-              //     ),
-              //     Container(
-              //       alignment: Alignment.center,
-              //       padding: const EdgeInsets.all(8),
-              //       color: Colors.teal[100],
-              //       child: const Text("Maximum Speed"),
-              //     ),
-              //   ],
-              // ),
+              Expanded(
+                  child: Consumer<RecordingViewModel>(
+                    builder: (context, recordingProvider, _) {
+                      return GridView.count(
+                        primary: false,
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 5,
+                        mainAxisSpacing: 5,
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.all(20),
+                        children: <Widget>[
+                          Container(
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.all(8),
+                            color: Colors.teal[100],
+                            child: Text(
+                              "Duration \n\n ${recordingProvider.record
+                                  .duration}",
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Container(
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.all(8),
+                            color: Colors.teal[100],
+                            child: Text(
+                              "Number of Runs \n\n ${recordingProvider.record
+                                  .numberOfRuns}",
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Container(
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.all(8),
+                            color: Colors.teal[100],
+                            child: Text(
+                              "Total Distance \n\n ${recordingProvider.record
+                                  .totalDistance}",
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Container(
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.all(8),
+                            color: Colors.teal[100],
+                            child: Text(
+                              "Total Descent \n\n ${recordingProvider.record
+                                  .totalVertical}",
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Container(
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.all(8),
+                            color: Colors.teal[100],
+                            child: Text(
+                              "Max speed \n\n ${recordingProvider.record
+                                  .maxSpeed}",
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Container(
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.all(8),
+                            color: Colors.teal[100],
+                            child: Text(
+                              "Average Speed \n\n ${recordingProvider.record
+                                  .averageSpeed}",
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      );
+                    })
+              )
             ],
           ),
         )

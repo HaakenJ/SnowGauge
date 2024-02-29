@@ -37,7 +37,19 @@ class RecordingViewModel extends ChangeNotifier {
   bool permissionGranted = false;
   final GeolocatorPlatform _geolocator = GeolocatorPlatform.instance;
   late Position currentPosition;
-  late Recording record;
+  late Recording record = Recording(
+      IdGenerator.generateId(),  // id
+      0,                    // userId
+      DateTime.now(),            // recordingDate
+      0,                         // numberOfRuns
+      0.0,                       // maxSpeed
+      0.0,                       // averageSpeed
+      0.0,                       // totalDistance
+      0.0,                       // totalVertical
+      0,                         // maxElevation
+      0,                         // minElevation
+      0                          // duration
+  );
   late RecordingDao recordingDao;
   late int _userId;
 
@@ -100,6 +112,7 @@ class RecordingViewModel extends ChangeNotifier {
       } else if (isRecording && isPaused) {
         previousTime = DateTime.now();
       }
+      notifyListeners();
     });
     notifyListeners();
   }
@@ -164,6 +177,7 @@ class RecordingViewModel extends ChangeNotifier {
       minimumElevation = currentElevation;
       record.minElevation = minimumElevation;
     }
+    notifyListeners();
   }
 
   void _updateSpeed(Position pos) {
@@ -191,5 +205,6 @@ class RecordingViewModel extends ChangeNotifier {
 
     // update average speed
     record.averageSpeed = record.duration > 0 ? record.totalDistance / record.duration : 0.0;
+    notifyListeners();
   }
 }
