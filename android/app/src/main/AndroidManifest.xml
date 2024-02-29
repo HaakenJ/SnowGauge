@@ -5,6 +5,8 @@
         android:label="SnowGauge"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBOoV_jThWfWgYHXn_mbrrM3RD0ZoEDkRU"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

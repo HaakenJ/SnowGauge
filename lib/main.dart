@@ -1,5 +1,8 @@
+import 'dart:collection';
+
 import 'package:SnowGauge/view_models/recording_view_model.dart';
 import 'package:SnowGauge/view_models/user_view_model.dart';
+import 'package:SnowGauge/views/map_location_view.dart';
 import 'package:SnowGauge/views/scaffold_nav_bar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -34,23 +37,6 @@ class MyApp extends StatelessWidget {
         theme: appTheme,
         routerConfig: router(),
       )
-    );
-    return MaterialApp(
-      title: 'Snow Gauge App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      // Redirect to LoginPage initially
-      home: const RecordActivityView(),
-      // home: const LoginPage(),
-      routes: {
-        '/login': (context) => LoginView(),
-        '/register': (context) => RegistrationView(),
-        '/leaderboard': (context) => LeaderboardView(),
-        '/history': (context) => HistoryView(),
-        '/user_account': (context) => const UserAccountView(),
-        '/record_activity': (context) => RecordActivityView(),
-      },
     );
   }
 }
@@ -146,6 +132,15 @@ GoRouter router() {
                   pageBuilder: (context, state) {
                     return const NoTransitionPage(
                       child: UserAccountView(),
+                    );
+                  }
+              ),
+              GoRoute(
+                  path: '/map',
+                  parentNavigatorKey: _shellNavigatorKey,
+                  pageBuilder: (context, state) {
+                    return const NoTransitionPage(
+                      child: MapLocationView(),
                     );
                   }
               ),

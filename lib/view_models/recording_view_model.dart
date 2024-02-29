@@ -36,7 +36,7 @@ class RecordingViewModel extends ChangeNotifier {
 
   bool permissionGranted = false;
   final GeolocatorPlatform _geolocator = GeolocatorPlatform.instance;
-  late Position _currentPosition;
+  late Position currentPosition;
   late Recording record;
   late RecordingDao recordingDao;
   late int _userId;
@@ -88,7 +88,7 @@ class RecordingViewModel extends ChangeNotifier {
 
     _geolocator.getPositionStream(locationSettings: locationSettings).listen((Position position) {
       if (isRecording && !isPaused) {
-        _currentPosition = position;
+        currentPosition = position;
         _updateElevation(position);
         _updateSpeed(position);
         print('Current info: number runs: ${record.numberOfRuns}\n'
