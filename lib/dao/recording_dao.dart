@@ -11,7 +11,7 @@ abstract class RecordingDao {
   @Query('SELECT * FROM Recording')
   Future<List<Recording>> getAllRecordings();
 
-  @Query('SELECT * FROM Recording WHERE id = :id')
+  @Query('SELECT * FROM Recording WHERE user_id = :id')
   Stream<List<Recording>> watchRecordingById(int id);
 
   // Update

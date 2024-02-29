@@ -2,19 +2,19 @@ import 'package:SnowGauge/entities/user_entity.dart';
 import 'package:floor/floor.dart';
 
 @Entity(
-  foreignKeys: [
-    ForeignKey(
-      childColumns: ['user_id'],
-      parentColumns: ['id'],
-      entity: User,
-    )
-  ],
+  // foreignKeys: [
+  //   ForeignKey(
+  //     childColumns: ['user_id'],
+  //     parentColumns: ['id'],
+  //     entity: User,
+  //   )
+  // ],
 )
 class Recording {
   @primaryKey
   final int id;
   @ColumnInfo(name: 'user_id')
-  final int userId;
+  int userId;
   // stored as millisecondsFromEpoch
   @ColumnInfo(name: 'recording_date')
   DateTime recordingDate;

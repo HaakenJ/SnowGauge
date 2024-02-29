@@ -2,6 +2,7 @@ import 'dart:ffi';
 import 'dart:math';
 
 import 'package:SnowGauge/dao/recording_dao.dart';
+import 'package:SnowGauge/dao/user_dao.dart';
 import 'package:SnowGauge/utilities/id_generator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
@@ -43,10 +44,12 @@ class RecordingViewModel extends ChangeNotifier {
   late Position currentPosition;
   late Recording record;
   late RecordingDao _recordingDao;
+  late UserDao _userDao;
   late final int _userId;
 
   RecordingViewModel(this._userId) {
     _recordingDao = GetIt.instance.get<RecordingDao>();
+    _userDao = GetIt.instance.get<UserDao>();
     _initializeRecording();
     _watchRecordings();
   }
@@ -66,6 +69,8 @@ class RecordingViewModel extends ChangeNotifier {
         0,                         // minElevation
         0                          // duration
     );
+    previousTime = DateTime.now();
+    previousPosition = null;
   }
 
   Future<void> requestPermission() async {
@@ -130,15 +135,18 @@ class RecordingViewModel extends ChangeNotifier {
   }
 
   void saveRecording() {
-    _recordingDao.insertRecording(record);
-    print('Record saved: \n'
-      'number runs: ${record.numberOfRuns}\n'
-      'max speed: ${record.maxSpeed}\n'
-      'average speed: ${record.averageSpeed}\n'
-      'total distance: ${record.totalDistance}\n'
-      'total descent: ${record.totalVertical}');
-    _initializeRecording();
-    notifyListeners();
+    _userDao.getUserIdByName('Bob').then((id) {
+      if (id != null) record.userId = id;
+      _recordingDao.insertRecording(record);
+      print('Record saved: \n'
+          'number runs: ${record.numberOfRuns}\n'
+          'max speed: ${record.maxSpeed}\n'
+          'average speed: ${record.averageSpeed}\n'
+          'total distance: ${record.totalDistance}\n'
+          'total descent: ${record.totalVertical}');
+      _initializeRecording();
+      notifyListeners();
+    });
   }
 
   void _updateElevation(Position pos) {
@@ -202,9 +210,11 @@ class RecordingViewModel extends ChangeNotifier {
   }
 
   void _watchRecordings() {
-    _recordingDao.watchRecordingById(_userId).listen((recordings) {
-      recordingHistory = recordings;
-      notifyListeners();
+    _userDao.getUserIdByName('Bob').then((id) {
+      _recordingDao.watchRecordingById(id!).listen((recordings) {
+        recordingHistory = recordings;
+        notifyListeners();
+      });
     });
   }
 

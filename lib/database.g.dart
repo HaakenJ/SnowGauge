@@ -89,7 +89,7 @@ class _$SnowGaugeDatabase extends SnowGaugeDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `User` (`id` INTEGER NOT NULL, `user_name` TEXT NOT NULL, `email` TEXT NOT NULL, `password` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Recording` (`id` INTEGER NOT NULL, `user_id` INTEGER NOT NULL, `recording_date` INTEGER NOT NULL, `number_of_runs` INTEGER NOT NULL, `max_speed` REAL NOT NULL, `average_speed` REAL NOT NULL, `total_distance` REAL NOT NULL, `total_vertical` REAL NOT NULL, `max_elevation` REAL NOT NULL, `min_elevation` REAL NOT NULL, `duration` INTEGER NOT NULL, FOREIGN KEY (`user_id`) REFERENCES `User` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `Recording` (`id` INTEGER NOT NULL, `user_id` INTEGER NOT NULL, `recording_date` INTEGER NOT NULL, `number_of_runs` INTEGER NOT NULL, `max_speed` REAL NOT NULL, `average_speed` REAL NOT NULL, `total_distance` REAL NOT NULL, `total_vertical` REAL NOT NULL, `max_elevation` REAL NOT NULL, `min_elevation` REAL NOT NULL, `duration` INTEGER NOT NULL, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -186,6 +186,11 @@ class _$UserDao extends UserDao {
     return _queryAdapter.query('SELECT id FROM User WHERE user_name = ?1',
         mapper: (Map<String, Object?> row) => row.values.first as int,
         arguments: [userName]);
+  }
+
+  @override
+  Future<void> deleteAllUsers() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM User');
   }
 
   @override
@@ -298,7 +303,7 @@ class _$RecordingDao extends RecordingDao {
   @override
   Stream<List<Recording>> watchRecordingById(int id) {
     return _queryAdapter.queryListStream(
-        'SELECT * FROM Recording WHERE id = ?1',
+        'SELECT * FROM Recording WHERE user_id = ?1',
         mapper: (Map<String, Object?> row) => Recording(
             row['id'] as int,
             row['user_id'] as int,

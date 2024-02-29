@@ -38,7 +38,7 @@ class UserViewModel extends ChangeNotifier {
   }
 
   Future<void> insertUser(String userName, String email, String password) async {
-    User newUser = User(1234, userName, email, password);
+    User newUser = User(IdGenerator.generateId(), userName, email, password);
     _userDao.insertUser(newUser);
     notifyListeners();
   }

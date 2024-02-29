@@ -24,4 +24,7 @@ abstract class UserDao {
   // Delete
   @delete
   Future<void> deleteUser(User user);
+
+  @Query('DELETE FROM User')
+  Future<void> deleteAllUsers();
 }

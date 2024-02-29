@@ -1,3 +1,4 @@
+import 'package:SnowGauge/entities/recording_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,7 +14,6 @@ class HistoryView extends StatefulWidget {
 }
 
 class _HistoryViewState extends State<HistoryView> {
-  late final List<String> recordings;
   late User _currentUser;
 
   @override
@@ -32,12 +32,37 @@ class _HistoryViewState extends State<HistoryView> {
         title: Text('History'),
       ),
       body: ListView.builder(
-        itemCount: recordings.length,
+        itemCount: recordingProvider.recordingHistory.length,
         itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(recordings[index]),
-          );
+          final record = recordingProvider.recordingHistory[index];
+          return _buildRecordItem(record, userProvider.currentUserName);
         },
+      ),
+    );
+  }
+
+  Widget _buildRecordItem(Recording record, String userName) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Card(
+        child: ListTile(
+          title: Text('User: $userName'),
+          tileColor: Colors.teal[100],
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Recording Date: ${record.recordingDate}'),
+              Text('Number of Runs: ${record.numberOfRuns}'),
+              Text('Max Speed: ${record.maxSpeed}'),
+              Text('Average Speed: ${record.averageSpeed}'),
+              Text('Total Distance: ${record.totalDistance}'),
+              Text('Total Vertical: ${record.totalVertical}'),
+              Text('Max Elevation: ${record.maxElevation}'),
+              Text('Min Elevation: ${record.minElevation}'),
+              Text('Duration: ${record.duration}'),
+            ],
+          ),
+        ),
       ),
     );
   }
