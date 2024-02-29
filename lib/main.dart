@@ -21,6 +21,7 @@ import 'package:SnowGauge/common/theme.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
+final int userId = 1234;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -29,7 +30,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => RecordingViewModel()),
+        // hardcoding a userId until login is set up
+        ChangeNotifierProvider(create: (context) => RecordingViewModel(userId)),
         ChangeNotifierProvider(create: (context) => UserViewModel()),
       ],
       child: MaterialApp.router(
@@ -67,7 +69,7 @@ void main() {
 
   // register RecordingViewModel
   getIt.registerSingletonWithDependencies<RecordingViewModel>(
-          () => RecordingViewModel(),
+          () => RecordingViewModel(userId),
       dependsOn: [SnowGaugeDatabase, RecordingDao]
   );
 

@@ -1,5 +1,4 @@
 import 'package:SnowGauge/view_models/recording_view_model.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../entities/user_entity.dart';
@@ -54,8 +53,7 @@ class _RecordActivityViewState extends State<RecordActivityView> {
                       if (recordingProvider.permissionGranted) {
                         // using a fake user here as a stub until auth is set up
                         // if permission granted then begin the recording session
-                        recordingProvider.startRecording(
-                            userProvider.currentUser.id);
+                        recordingProvider.startRecording();
                       }
                     } else {
                       // pause/resume recording as it is already recording
@@ -200,23 +198,6 @@ class _RecordActivityViewState extends State<RecordActivityView> {
       },
     );
   }
-
-  // // Function to save recording data
-  // void _saveRecordingData() {
-  //
-  //   recordingData.add('Date: ${DateTime.now()}');
-  //   // Add more data if needed
-  // }
-
-  // // Function to navigate to the history page
-  // void _navigateToHistoryPage() {
-  //   Navigator.pushReplacement(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => HistoryView(data: recordingData),
-  //     ),
-  //   );
-  // }
 
   // Function to show the confirmation message
   void _showConfirmation(String message) {

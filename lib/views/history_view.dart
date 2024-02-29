@@ -1,24 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class HistoryView extends StatelessWidget {
-  final List<String> data;
-  // create a list of the historical records for the current user
-  // from the userProvider watch a stream of the records
-  // when state is updated use list tiles to display the records
+import '../entities/user_entity.dart';
+import '../view_models/recording_view_model.dart';
+import '../view_models/user_view_model.dart';
 
-  const HistoryView({super.key,  this.data = const []});
+class HistoryView extends StatefulWidget {
+  const HistoryView({super.key});
+
+  @override
+  _HistoryViewState createState() => _HistoryViewState();
+}
+
+class _HistoryViewState extends State<HistoryView> {
+  late final List<String> recordings;
+  late User _currentUser;
+
+  @override
+  void initState() {
+    _currentUser = Provider.of<UserViewModel>(context, listen: false).currentUser;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final recordingProvider = Provider.of<RecordingViewModel>(context);
+    final userProvider = Provider.of<UserViewModel>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('History'),
       ),
       body: ListView.builder(
-        itemCount: data.length,
+        itemCount: recordings.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(data[index]),
+            title: Text(recordings[index]),
           );
         },
       ),

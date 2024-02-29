@@ -296,8 +296,9 @@ class _$RecordingDao extends RecordingDao {
   }
 
   @override
-  Stream<Recording?> watchRecordingById(int id) {
-    return _queryAdapter.queryStream('SELECT * FROM Recording WHERE id = ?1',
+  Stream<List<Recording>> watchRecordingById(int id) {
+    return _queryAdapter.queryListStream(
+        'SELECT * FROM Recording WHERE id = ?1',
         mapper: (Map<String, Object?> row) => Recording(
             row['id'] as int,
             row['user_id'] as int,

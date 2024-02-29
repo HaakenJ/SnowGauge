@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:math';
 
 import 'package:SnowGauge/dao/recording_dao.dart';
@@ -34,27 +35,20 @@ class RecordingViewModel extends ChangeNotifier {
   // TIME VARIABLES
   int totalTime = 0;
 
+  // User's prior recordings
+  List<Recording> recordingHistory = [];
+
   bool permissionGranted = false;
   final GeolocatorPlatform _geolocator = GeolocatorPlatform.instance;
   late Position currentPosition;
-  late Recording record = Recording(
-      IdGenerator.generateId(),  // id
-      0,                    // userId
-      DateTime.now(),            // recordingDate
-      0,                         // numberOfRuns
-      0.0,                       // maxSpeed
-      0.0,                       // averageSpeed
-      0.0,                       // totalDistance
-      0.0,                       // totalVertical
-      0,                         // maxElevation
-      0,                         // minElevation
-      0                          // duration
-  );
-  late RecordingDao recordingDao;
-  late int _userId;
+  late Recording record;
+  late RecordingDao _recordingDao;
+  late final int _userId;
 
-  RecordingViewModel() {
-    recordingDao = GetIt.instance.get<RecordingDao>();
+  RecordingViewModel(this._userId) {
+    _recordingDao = GetIt.instance.get<RecordingDao>();
+    _initializeRecording();
+    _watchRecordings();
   }
 
   void _initializeRecording() {
@@ -85,9 +79,8 @@ class RecordingViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void startRecording(int userId) {
+  void startRecording() {
     isRecording = true;
-    _userId = userId;
     _initializeRecording();
 
     const LocationSettings locationSettings = LocationSettings(
@@ -137,7 +130,7 @@ class RecordingViewModel extends ChangeNotifier {
   }
 
   void saveRecording() {
-    recordingDao.insertRecording(record);
+    _recordingDao.insertRecording(record);
     print('Record saved: \n'
       'number runs: ${record.numberOfRuns}\n'
       'max speed: ${record.maxSpeed}\n'
@@ -207,4 +200,12 @@ class RecordingViewModel extends ChangeNotifier {
     record.averageSpeed = record.duration > 0 ? record.totalDistance / record.duration : 0.0;
     notifyListeners();
   }
+
+  void _watchRecordings() {
+    _recordingDao.watchRecordingById(_userId).listen((recordings) {
+      recordingHistory = recordings;
+      notifyListeners();
+    });
+  }
+
 }

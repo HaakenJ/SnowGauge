@@ -12,7 +12,7 @@ abstract class RecordingDao {
   Future<List<Recording>> getAllRecordings();
 
   @Query('SELECT * FROM Recording WHERE id = :id')
-  Stream<Recording?> watchRecordingById(int id);
+  Stream<List<Recording>> watchRecordingById(int id);
 
   // Update
   @Update(onConflict: OnConflictStrategy.replace)

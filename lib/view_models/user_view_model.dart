@@ -7,7 +7,7 @@ import '../entities/user_entity.dart';
 
 class UserViewModel extends ChangeNotifier {
   late UserDao _userDao;
-  late User currentUser = User(IdGenerator.generateId(), 'Bob', 'bob@bob.com', 'bobpass');
+  late User currentUser = User(1234, 'Bob', 'bob@bob.com', 'bobpass');
   String currentUserName = 'Bob'; // hardcoded for now TODO: remove hardcoding
 
   UserViewModel() {
@@ -38,7 +38,7 @@ class UserViewModel extends ChangeNotifier {
   }
 
   Future<void> insertUser(String userName, String email, String password) async {
-    User newUser = User(IdGenerator.generateId(), userName, email, password);
+    User newUser = User(1234, userName, email, password);
     _userDao.insertUser(newUser);
     notifyListeners();
   }
