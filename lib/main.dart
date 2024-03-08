@@ -1,5 +1,7 @@
 import 'dart:collection';
 
+import 'package:SnowGauge/utilities/dependencies.dart';
+import 'package:SnowGauge/utilities/firebase_initializer.dart';
 import 'package:SnowGauge/view_models/recording_view_model.dart';
 import 'package:SnowGauge/view_models/user_view_model.dart';
 import 'package:SnowGauge/views/map_location_view.dart';
@@ -21,7 +23,6 @@ import 'package:SnowGauge/common/theme.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
-final int userId = 1234;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         // hardcoding a userId until login is set up
-        ChangeNotifierProvider(create: (context) => RecordingViewModel(userId)),
+        ChangeNotifierProvider(create: (context) => RecordingViewModel()),
         ChangeNotifierProvider(create: (context) => UserViewModel()),
       ],
       child: MaterialApp.router(
@@ -44,41 +45,13 @@ class MyApp extends StatelessWidget {
 }
 
 void main() {
-  GetIt getIt = GetIt.instance;
-
-  // register database with getIt
-  getIt.registerSingletonAsync<SnowGaugeDatabase>(
-      () async => $FloorSnowGaugeDatabase.databaseBuilder('snow_gauge_database').build()
-  );
-
-  // register userDao
-  getIt.registerSingletonWithDependencies<UserDao>(() {
-    return GetIt.instance.get<SnowGaugeDatabase>().userDao;
-  }, dependsOn: [SnowGaugeDatabase]);
-
-  // register recording dao
-  getIt.registerSingletonWithDependencies<RecordingDao>(() {
-    return GetIt.instance.get<SnowGaugeDatabase>().recordingDao;
-  }, dependsOn: [SnowGaugeDatabase]);
-
-  // register UserViewModel
-  getIt.registerSingletonWithDependencies<UserViewModel>(
-          () => UserViewModel(),
-      dependsOn: [SnowGaugeDatabase, UserDao]
-  );
-
-  // register RecordingViewModel
-  getIt.registerSingletonWithDependencies<RecordingViewModel>(
-          () => RecordingViewModel(userId),
-      dependsOn: [SnowGaugeDatabase, RecordingDao]
-  );
-
+  registerDependencies();
   runApp(const MyApp());
 }
 
 GoRouter router() {
   return GoRouter(
-      initialLocation: '/record-activity',
+      initialLocation: '/login',
       navigatorKey: _rootNavigatorKey,
       routes: [
         ShellRoute(
@@ -92,6 +65,24 @@ GoRouter router() {
               );
             },
             routes: [
+              GoRoute(
+                  path: '/login',
+                  parentNavigatorKey: _shellNavigatorKey,
+                  pageBuilder: (context, state) {
+                    return NoTransitionPage(
+                        child: FutureBuilder(
+                            future: GetIt.instance.allReady(),
+                            builder: (BuildContext context, AsyncSnapshot snapshot) {
+                              if (snapshot.hasData) {
+                                return const FirebaseInitializer();
+                              } else {
+                                return const Center(child: CircularProgressIndicator());
+                              }
+                            }
+                        )
+                    );
+                  }
+              ),
               GoRoute(
                   path: '/record-activity',
                   parentNavigatorKey: _shellNavigatorKey,
@@ -107,15 +98,6 @@ GoRouter router() {
                               }
                             }
                         )
-                    );
-                  }
-              ),
-              GoRoute(
-                  path: '/leaderboard',
-                  parentNavigatorKey: _shellNavigatorKey,
-                  pageBuilder: (context, state) {
-                    return const NoTransitionPage(
-                      child: LeaderboardView(),
                     );
                   }
               ),
@@ -147,26 +129,6 @@ GoRouter router() {
                   }
               ),
             ]
-        ),
-        GoRoute(
-          parentNavigatorKey: _rootNavigatorKey,
-          path: '/login',
-          pageBuilder: (context, state) {
-            return NoTransitionPage(
-              key: UniqueKey(),
-              child: const LoginView(),
-            );
-          },
-        ),
-        GoRoute(
-          parentNavigatorKey: _rootNavigatorKey,
-          path: '/register',
-          pageBuilder: (context, state) {
-            return NoTransitionPage(
-              key: UniqueKey(),
-              child: const RegistrationView(),
-            );
-          },
         ),
       ]
   );

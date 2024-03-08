@@ -12,11 +12,10 @@ class RecordActivityView extends StatefulWidget {
 }
 
 class _RecordActivityViewState extends State<RecordActivityView> {
-  late User _currentUser;
+  late User? _currentUser = User(0, 'Bob', 'bob@bob.com', '123456');
 
   @override
   void initState() {
-    _currentUser = Provider.of<UserViewModel>(context, listen: false).currentUser;
     super.initState();
   }
 
@@ -24,6 +23,9 @@ class _RecordActivityViewState extends State<RecordActivityView> {
   Widget build(BuildContext context) {
     final recordingProvider = Provider.of<RecordingViewModel>(context);
     final userProvider = Provider.of<UserViewModel>(context);
+    if (userProvider.currentUser != null) {
+      _currentUser = userProvider.currentUser!;
+    }
 
     return Scaffold(
         appBar: AppBar(

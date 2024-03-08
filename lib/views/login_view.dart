@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../auth_service.dart';
 
@@ -12,56 +13,56 @@ class _LoginViewState extends State<LoginView> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  AuthService _authService = AuthService();
+  String? _firebaseErrorCode;
+
+  _onSignUp() async {
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+      setState(() {
+        _firebaseErrorCode = null;
+      });
+    } on FirebaseAuthException catch (ex) {
+      print(ex.code);
+      print(ex.message);
+      setState(() {
+        _firebaseErrorCode = ex.code;
+      });
+    }
+  }
+
+  _onSignIn() {
+    FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: _emailController.text,
+      password: _passwordController.text,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Login'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      appBar: AppBar(),
+      body: SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(labelText: 'Email'),
-            ),
-            SizedBox(height: 10),
-            TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: InputDecoration(labelText: 'Password'),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                // We need to implement login logic
-                String email = _emailController.text;
-                String password = _passwordController.text;
-
-                bool success = await _authService.login(email, password);
-
-                if (success) {
-                  // Navigate to LeaderboardPage on successful login
-                  Navigator.pushReplacementNamed(context, '/leaderboard');
-                } else {
-                  // if login failed we need to show an error message
-                }
-              },
-              child: Text('Login'),
-            ),
-            SizedBox(height: 10),
-            TextButton(
-              onPressed: () {
-                // Navigate to registration page
-                Navigator.pushNamed(context, '/register');
-              },
-              child: Text('Don\'t have an account? Register here.'),
-            ),
-          ],
+            children: [
+              TextField(
+                controller: _emailController,
+              ),
+              TextField(
+                controller: _passwordController,
+              ),
+              ElevatedButton(
+                child: const Text('Sign up'),
+                onPressed: _onSignUp,
+              ),
+              ElevatedButton(
+                child: const Text('Sign in'),
+                onPressed: _onSignIn,
+              ),
+              if(_firebaseErrorCode != null) Text(_firebaseErrorCode!)
+            ]
         ),
       ),
     );

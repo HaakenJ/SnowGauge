@@ -47,7 +47,9 @@ class RecordingViewModel extends ChangeNotifier {
   late UserDao _userDao;
   late final int _userId;
 
-  RecordingViewModel(this._userId) {
+  RecordingViewModel() {
+    // replace with Firebase auth call
+    _userId = 1234;
     _recordingDao = GetIt.instance.get<RecordingDao>();
     _userDao = GetIt.instance.get<UserDao>();
     _initializeRecording();

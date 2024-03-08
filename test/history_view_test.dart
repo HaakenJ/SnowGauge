@@ -24,7 +24,7 @@ void main() {
       final userDao = MockUserDao();
       GetIt.instance.registerSingleton<RecordingDao>(recordingDao);
       GetIt.instance.registerSingleton<UserDao>(userDao);
-      recordingViewModel = RecordingViewModel(1234);
+      recordingViewModel = RecordingViewModel();
       userViewModel = UserViewModel();
     });
 

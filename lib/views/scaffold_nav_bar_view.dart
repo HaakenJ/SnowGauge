@@ -14,7 +14,6 @@ class ScaffoldNavBar extends StatefulWidget {
 class _ScaffoldNavBarState extends State<ScaffoldNavBar> {
   int _currentIndex = 0;
   static const String route1 = '/record-activity';
-  static const String route2 = '/leaderboard';
   static const String route3 = '/history';
   static const String route4 = '/map';
 
@@ -24,12 +23,6 @@ class _ScaffoldNavBarState extends State<ScaffoldNavBar> {
       activeIcon: Icon(Icons.downhill_skiing),
       label: 'RECORD',
       initialLocation: route1,
-    ),
-    MyCustomBottomNavBarItem(
-      icon: Icon(Icons.leaderboard_outlined),
-      activeIcon: Icon(Icons.leaderboard),
-      label: 'LEADERBOARD',
-      initialLocation: route2,
     ),
     MyCustomBottomNavBarItem(
       icon: Icon(Icons.list_alt_outlined),
@@ -64,11 +57,11 @@ class _ScaffoldNavBarState extends State<ScaffoldNavBar> {
         },
         currentIndex: widget.location == route1
             ? 0
-            : widget.location == route2
-            ? 1
             : widget.location == route3
+            ? 1
+            : widget.location == route4
             ? 2
-            : 3,
+            : 0,
         items: tabs,
       ),
     );
