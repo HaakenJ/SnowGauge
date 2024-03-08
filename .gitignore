@@ -2,6 +2,8 @@
 # Created by `dart pub`
 .dart_tool/
 
+firebase-tools-macos
+
 # Miscellaneous
 *.class
 *.log
