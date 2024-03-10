@@ -61,8 +61,6 @@ class _$SnowGaugeDatabase extends SnowGaugeDatabase {
     changeListener = listener ?? StreamController<String>.broadcast();
   }
 
-  LocalUserDao? _userDaoInstance;
-
   RecordingDao? _recordingDaoInstance;
 
   Future<sqflite.Database> open(
@@ -87,8 +85,6 @@ class _$SnowGaugeDatabase extends SnowGaugeDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `LocalUser` (`id` TEXT NOT NULL, `user_name` TEXT NOT NULL, PRIMARY KEY (`id`))');
-        await database.execute(
             'CREATE TABLE IF NOT EXISTS `Recording` (`id` INTEGER NOT NULL, `user_id` TEXT NOT NULL, `recording_date` INTEGER NOT NULL, `number_of_runs` INTEGER NOT NULL, `max_speed` REAL NOT NULL, `average_speed` REAL NOT NULL, `total_distance` REAL NOT NULL, `total_vertical` REAL NOT NULL, `max_elevation` REAL NOT NULL, `min_elevation` REAL NOT NULL, `duration` INTEGER NOT NULL, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
@@ -98,104 +94,8 @@ class _$SnowGaugeDatabase extends SnowGaugeDatabase {
   }
 
   @override
-  LocalUserDao get userDao {
-    return _userDaoInstance ??= _$LocalUserDao(database, changeListener);
-  }
-
-  @override
   RecordingDao get recordingDao {
     return _recordingDaoInstance ??= _$RecordingDao(database, changeListener);
-  }
-}
-
-class _$LocalUserDao extends LocalUserDao {
-  _$LocalUserDao(
-    this.database,
-    this.changeListener,
-  )   : _queryAdapter = QueryAdapter(database, changeListener),
-        _localUserInsertionAdapter = InsertionAdapter(
-            database,
-            'LocalUser',
-            (LocalUser item) =>
-                <String, Object?>{'id': item.id, 'user_name': item.userName},
-            changeListener),
-        _localUserUpdateAdapter = UpdateAdapter(
-            database,
-            'LocalUser',
-            ['id'],
-            (LocalUser item) =>
-                <String, Object?>{'id': item.id, 'user_name': item.userName},
-            changeListener),
-        _localUserDeletionAdapter = DeletionAdapter(
-            database,
-            'LocalUser',
-            ['id'],
-            (LocalUser item) =>
-                <String, Object?>{'id': item.id, 'user_name': item.userName},
-            changeListener);
-
-  final sqflite.DatabaseExecutor database;
-
-  final StreamController<String> changeListener;
-
-  final QueryAdapter _queryAdapter;
-
-  final InsertionAdapter<LocalUser> _localUserInsertionAdapter;
-
-  final UpdateAdapter<LocalUser> _localUserUpdateAdapter;
-
-  final DeletionAdapter<LocalUser> _localUserDeletionAdapter;
-
-  @override
-  Future<List<LocalUser>> getAllUsers() async {
-    return _queryAdapter.queryList('SELECT * FROM LocalUser',
-        mapper: (Map<String, Object?> row) =>
-            LocalUser(row['id'] as String, row['user_name'] as String));
-  }
-
-  @override
-  Stream<LocalUser?> watchUserById(String id) {
-    return _queryAdapter.queryStream('SELECT * FROM LocalUser WHERE id = ?1',
-        mapper: (Map<String, Object?> row) =>
-            LocalUser(row['id'] as String, row['user_name'] as String),
-        arguments: [id],
-        queryableName: 'LocalUser',
-        isView: false);
-  }
-
-  @override
-  Future<String?> getUserIdByName(String userName) async {
-    return _queryAdapter.query('SELECT id FROM LocalUser WHERE user_name = ?1',
-        mapper: (Map<String, Object?> row) => row.values.first as String,
-        arguments: [userName]);
-  }
-
-  @override
-  Future<LocalUser?> getUserById(String id) async {
-    return _queryAdapter.query('SELECT * FROM LocalUser WHERE id = ?1',
-        mapper: (Map<String, Object?> row) =>
-            LocalUser(row['id'] as String, row['user_name'] as String),
-        arguments: [id]);
-  }
-
-  @override
-  Future<void> deleteAllUsers() async {
-    await _queryAdapter.queryNoReturn('DELETE FROM LocalUser');
-  }
-
-  @override
-  Future<void> insertUser(LocalUser user) async {
-    await _localUserInsertionAdapter.insert(user, OnConflictStrategy.abort);
-  }
-
-  @override
-  Future<void> updateUser(LocalUser user) async {
-    await _localUserUpdateAdapter.update(user, OnConflictStrategy.replace);
-  }
-
-  @override
-  Future<void> deleteUser(LocalUser user) async {
-    await _localUserDeletionAdapter.delete(user);
   }
 }
 

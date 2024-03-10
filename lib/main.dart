@@ -1,22 +1,13 @@
-import 'dart:collection';
-
 import 'package:SnowGauge/utilities/dependencies.dart';
 import 'package:SnowGauge/utilities/firebase_initializer.dart';
 import 'package:SnowGauge/view_models/recording_view_model.dart';
-import 'package:SnowGauge/view_models/user_view_model.dart';
 import 'package:SnowGauge/views/map_location_view.dart';
 import 'package:SnowGauge/views/scaffold_nav_bar_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'dao/recording_dao.dart';
-import 'dao/user_dao.dart';
-import 'database.dart';
 import 'firebase_options.dart';
-import 'views/login_view.dart';
-import 'views/registration_view.dart';
-import 'views/leaderboard_view.dart';
 import 'views/history_view.dart';
 import 'views/user_account_view.dart';
 import 'views/recording_view.dart';
@@ -38,7 +29,6 @@ class MyApp extends StatelessWidget {
       providers: [
         // hardcoding a userId until login is set up
         ChangeNotifierProvider(create: (context) => RecordingViewModel()),
-        ChangeNotifierProvider(create: (context) => UserViewModel()),
       ],
       child: MaterialApp.router(
         title: 'SnowGauge',

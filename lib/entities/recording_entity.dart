@@ -1,14 +1,6 @@
-import 'package:SnowGauge/entities/user_entity.dart';
 import 'package:floor/floor.dart';
 
 @Entity(
-  // foreignKeys: [
-  //   ForeignKey(
-  //     childColumns: ['user_id'],
-  //     parentColumns: ['id'],
-  //     entity: User,
-  //   )
-  // ],
 )
 class Recording {
   @primaryKey
