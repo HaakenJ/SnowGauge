@@ -1,60 +1,67 @@
 import 'package:SnowGauge/view_models/recording_view_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../entities/user_entity.dart';
-import '../view_models/user_view_model.dart';
 
 class RecordActivityView extends StatefulWidget {
-  const RecordActivityView({super.key});
+  final FirebaseAuth auth;
+  const RecordActivityView({super.key, required this.auth});
 
   @override
   _RecordActivityViewState createState() => _RecordActivityViewState();
 }
 
 class _RecordActivityViewState extends State<RecordActivityView> {
-  late User? _currentUser = User(0, 'Bob', 'bob@bob.com', '123456');
 
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
     final recordingProvider = Provider.of<RecordingViewModel>(context);
-    final userProvider = Provider.of<UserViewModel>(context);
-    if (userProvider.currentUser != null) {
-      _currentUser = userProvider.currentUser!;
-    }
+    // final FirebaseAuth auth = FirebaseAuth.instance;
+    FirebaseAuth auth = widget.auth;
 
-    return Scaffold(
+
+    if (auth.currentUser == null) {
+      return Scaffold(
         appBar: AppBar(
-          title: const Text('Record Activity'),
+          title: Text('Record Activity'),
         ),
-        body: Center(
+        body: const Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              // Add our record activity  here
-              Text(
-                recordingProvider.isRecording ? (recordingProvider
-                    .isPaused
-                    ? 'Paused'
-                    : 'Recording...') : 'Not Recording',
-                style: const TextStyle(fontSize: 24),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton( // play/pause button
-                onPressed: () async {
-                  // Toggle recording status
+              Text('You must be signed in to use this feature')
+            ],
+          ),
+        ),
+      );
+    } else {
+      return Scaffold(
+          appBar: AppBar(
+            title: const Text('Record Activity'),
+          ),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                // Add our record activity  here
+                Text(
+                  recordingProvider.isRecording ? (recordingProvider
+                      .isPaused
+                      ? 'Paused'
+                      : 'Recording...') : 'Not Recording',
+                  style: const TextStyle(fontSize: 24),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton( // play/pause button
+                  onPressed: () async {
+                    // Toggle recording status
                     if (!recordingProvider.isRecording) {
                       if (!recordingProvider.permissionGranted) {
                         await recordingProvider.requestPermission();
                       }
 
                       if (recordingProvider.permissionGranted) {
-                        // using a fake user here as a stub until auth is set up
-                        // if permission granted then begin the recording session
                         recordingProvider.startRecording();
                       }
                     } else {
@@ -64,107 +71,110 @@ class _RecordActivityViewState extends State<RecordActivityView> {
                     setState(() {
 
                     });
-                },
-                child: Text(
-                  recordingProvider.isRecording
-                      ? (recordingProvider
-                      .isPaused ? 'Resume' : 'Pause')
-                      : 'Start Recording',
+                  },
+                  child: Text(
+                    recordingProvider.isRecording
+                        ? (recordingProvider
+                        .isPaused ? 'Resume' : 'Pause')
+                        : 'Start Recording',
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () {
-                  // Stop recording
-                  setState(() {
-                    recordingProvider.stopRecording();
-                  });
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    // Stop recording
+                    setState(() {
+                      recordingProvider.stopRecording();
+                    });
 
-                  // Show save or discard prompt
-                  _showSaveDiscardPrompt(recordingProvider);
-                },
-                child: const Text('Stop Recording'),
-              ),
-              Expanded(
-                  child: Consumer<RecordingViewModel>(
-                    builder: (context, recordingProvider, _) {
-                      return GridView.count(
-                        primary: false,
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 5,
-                        mainAxisSpacing: 5,
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        padding: const EdgeInsets.all(20),
-                        children: <Widget>[
-                          Container(
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.all(8),
-                            color: Colors.teal[100],
-                            child: Text(
-                              "Duration \n\n ${recordingProvider.record
-                                  .duration}",
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          Container(
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.all(8),
-                            color: Colors.teal[100],
-                            child: Text(
-                              "Number of Runs \n\n ${recordingProvider.record
-                                  .numberOfRuns}",
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          Container(
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.all(8),
-                            color: Colors.teal[100],
-                            child: Text(
-                              "Total Distance \n\n ${recordingProvider.record
-                                  .totalDistance}",
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          Container(
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.all(8),
-                            color: Colors.teal[100],
-                            child: Text(
-                              "Total Descent \n\n ${recordingProvider.record
-                                  .totalVertical}",
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          Container(
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.all(8),
-                            color: Colors.teal[100],
-                            child: Text(
-                              "Max speed \n\n ${recordingProvider.record
-                                  .maxSpeed}",
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          Container(
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.all(8),
-                            color: Colors.teal[100],
-                            child: Text(
-                              "Average Speed \n\n ${recordingProvider.record
-                                  .averageSpeed}",
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ],
-                      );
-                    })
-              )
-            ],
-          ),
-        )
-    );
+                    // Show save or discard prompt
+                    _showSaveDiscardPrompt(recordingProvider);
+                  },
+                  child: const Text('Stop Recording'),
+                ),
+                Expanded(
+                    child: Consumer<RecordingViewModel>(
+                        builder: (context, recordingProvider, _) {
+                          return GridView.count(
+                            primary: false,
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 5,
+                            mainAxisSpacing: 5,
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            padding: const EdgeInsets.all(20),
+                            children: <Widget>[
+                              Container(
+                                alignment: Alignment.center,
+                                padding: const EdgeInsets.all(8),
+                                color: Colors.teal[100],
+                                child: Text(
+                                  "Duration \n\n ${recordingProvider.record
+                                      .duration}",
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              Container(
+                                alignment: Alignment.center,
+                                padding: const EdgeInsets.all(8),
+                                color: Colors.teal[100],
+                                child: Text(
+                                  "Number of Runs \n\n ${recordingProvider
+                                      .record
+                                      .numberOfRuns}",
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              Container(
+                                alignment: Alignment.center,
+                                padding: const EdgeInsets.all(8),
+                                color: Colors.teal[100],
+                                child: Text(
+                                  "Total Distance \n\n ${recordingProvider
+                                      .record
+                                      .totalDistance}",
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              Container(
+                                alignment: Alignment.center,
+                                padding: const EdgeInsets.all(8),
+                                color: Colors.teal[100],
+                                child: Text(
+                                  "Total Descent \n\n ${recordingProvider.record
+                                      .totalVertical}",
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              Container(
+                                alignment: Alignment.center,
+                                padding: const EdgeInsets.all(8),
+                                color: Colors.teal[100],
+                                child: Text(
+                                  "Max speed \n\n ${recordingProvider.record
+                                      .maxSpeed}",
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              Container(
+                                alignment: Alignment.center,
+                                padding: const EdgeInsets.all(8),
+                                color: Colors.teal[100],
+                                child: Text(
+                                  "Average Speed \n\n ${recordingProvider.record
+                                      .averageSpeed}",
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ],
+                          );
+                        })
+                )
+              ],
+            ),
+          )
+      );
+    }
   }
 
   // Function to show the save or discard prompt

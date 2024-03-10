@@ -1,10 +1,8 @@
 import 'package:SnowGauge/entities/recording_entity.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../entities/user_entity.dart';
 import '../view_models/recording_view_model.dart';
-import '../view_models/user_view_model.dart';
 
 class HistoryView extends StatefulWidget {
   const HistoryView({super.key});
@@ -14,31 +12,43 @@ class HistoryView extends StatefulWidget {
 }
 
 class _HistoryViewState extends State<HistoryView> {
-  late User _currentUser;
-
   @override
   void initState() {
-    _currentUser = Provider.of<UserViewModel>(context, listen: false).currentUser;
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final recordingProvider = Provider.of<RecordingViewModel>(context);
-    final userProvider = Provider.of<UserViewModel>(context);
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('History'),
-      ),
-      body: ListView.builder(
-        itemCount: recordingProvider.recordingHistory.length,
-        itemBuilder: (context, index) {
-          final record = recordingProvider.recordingHistory[index];
-          return _buildRecordItem(record, userProvider.currentUserName);
-        },
-      ),
-    );
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    if (auth.currentUser == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Record Activity'),
+        ),
+        body: const Center(
+          child: Column(
+            children: [
+              Text('You must be signed in to use this feature')
+            ],
+          ),
+        ),
+      );
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('History'),
+        ),
+        body: ListView.builder(
+          itemCount: recordingProvider.recordingHistory.length,
+          itemBuilder: (context, index) {
+            final record = recordingProvider.recordingHistory[index];
+            return _buildRecordItem(record, auth.currentUser!.email!);
+          },
+        ),
+      );
+    }
   }
 
   Widget _buildRecordItem(Recording record, String userName) {

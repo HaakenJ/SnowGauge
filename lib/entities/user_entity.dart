@@ -1,13 +1,11 @@
 import 'package:floor/floor.dart';
 
 @entity
-class User {
+class LocalUser {
   @primaryKey
-  final int id;
+  final String id;
   @ColumnInfo(name: 'user_name')
   String userName;
-  String email;
-  String password;
 
-  User(this.id, this.userName, this.email, this.password);
+  LocalUser(this.id, this.userName);
 }

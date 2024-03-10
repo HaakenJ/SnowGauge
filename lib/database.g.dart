@@ -61,7 +61,7 @@ class _$SnowGaugeDatabase extends SnowGaugeDatabase {
     changeListener = listener ?? StreamController<String>.broadcast();
   }
 
-  UserDao? _userDaoInstance;
+  LocalUserDao? _userDaoInstance;
 
   RecordingDao? _recordingDaoInstance;
 
@@ -87,9 +87,9 @@ class _$SnowGaugeDatabase extends SnowGaugeDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `User` (`id` INTEGER NOT NULL, `user_name` TEXT NOT NULL, `email` TEXT NOT NULL, `password` TEXT NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `LocalUser` (`id` TEXT NOT NULL, `user_name` TEXT NOT NULL, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Recording` (`id` INTEGER NOT NULL, `user_id` INTEGER NOT NULL, `recording_date` INTEGER NOT NULL, `number_of_runs` INTEGER NOT NULL, `max_speed` REAL NOT NULL, `average_speed` REAL NOT NULL, `total_distance` REAL NOT NULL, `total_vertical` REAL NOT NULL, `max_elevation` REAL NOT NULL, `min_elevation` REAL NOT NULL, `duration` INTEGER NOT NULL, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `Recording` (`id` INTEGER NOT NULL, `user_id` TEXT NOT NULL, `recording_date` INTEGER NOT NULL, `number_of_runs` INTEGER NOT NULL, `max_speed` REAL NOT NULL, `average_speed` REAL NOT NULL, `total_distance` REAL NOT NULL, `total_vertical` REAL NOT NULL, `max_elevation` REAL NOT NULL, `min_elevation` REAL NOT NULL, `duration` INTEGER NOT NULL, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -98,8 +98,8 @@ class _$SnowGaugeDatabase extends SnowGaugeDatabase {
   }
 
   @override
-  UserDao get userDao {
-    return _userDaoInstance ??= _$UserDao(database, changeListener);
+  LocalUserDao get userDao {
+    return _userDaoInstance ??= _$LocalUserDao(database, changeListener);
   }
 
   @override
@@ -108,42 +108,30 @@ class _$SnowGaugeDatabase extends SnowGaugeDatabase {
   }
 }
 
-class _$UserDao extends UserDao {
-  _$UserDao(
+class _$LocalUserDao extends LocalUserDao {
+  _$LocalUserDao(
     this.database,
     this.changeListener,
   )   : _queryAdapter = QueryAdapter(database, changeListener),
-        _userInsertionAdapter = InsertionAdapter(
+        _localUserInsertionAdapter = InsertionAdapter(
             database,
-            'User',
-            (User item) => <String, Object?>{
-                  'id': item.id,
-                  'user_name': item.userName,
-                  'email': item.email,
-                  'password': item.password
-                },
+            'LocalUser',
+            (LocalUser item) =>
+                <String, Object?>{'id': item.id, 'user_name': item.userName},
             changeListener),
-        _userUpdateAdapter = UpdateAdapter(
+        _localUserUpdateAdapter = UpdateAdapter(
             database,
-            'User',
+            'LocalUser',
             ['id'],
-            (User item) => <String, Object?>{
-                  'id': item.id,
-                  'user_name': item.userName,
-                  'email': item.email,
-                  'password': item.password
-                },
+            (LocalUser item) =>
+                <String, Object?>{'id': item.id, 'user_name': item.userName},
             changeListener),
-        _userDeletionAdapter = DeletionAdapter(
+        _localUserDeletionAdapter = DeletionAdapter(
             database,
-            'User',
+            'LocalUser',
             ['id'],
-            (User item) => <String, Object?>{
-                  'id': item.id,
-                  'user_name': item.userName,
-                  'email': item.email,
-                  'password': item.password
-                },
+            (LocalUser item) =>
+                <String, Object?>{'id': item.id, 'user_name': item.userName},
             changeListener);
 
   final sqflite.DatabaseExecutor database;
@@ -152,60 +140,62 @@ class _$UserDao extends UserDao {
 
   final QueryAdapter _queryAdapter;
 
-  final InsertionAdapter<User> _userInsertionAdapter;
+  final InsertionAdapter<LocalUser> _localUserInsertionAdapter;
 
-  final UpdateAdapter<User> _userUpdateAdapter;
+  final UpdateAdapter<LocalUser> _localUserUpdateAdapter;
 
-  final DeletionAdapter<User> _userDeletionAdapter;
+  final DeletionAdapter<LocalUser> _localUserDeletionAdapter;
 
   @override
-  Future<List<User>> getAllUsers() async {
-    return _queryAdapter.queryList('SELECT * FROM User',
-        mapper: (Map<String, Object?> row) => User(
-            row['id'] as int,
-            row['user_name'] as String,
-            row['email'] as String,
-            row['password'] as String));
+  Future<List<LocalUser>> getAllUsers() async {
+    return _queryAdapter.queryList('SELECT * FROM LocalUser',
+        mapper: (Map<String, Object?> row) =>
+            LocalUser(row['id'] as String, row['user_name'] as String));
   }
 
   @override
-  Stream<User?> watchUserById(int id) {
-    return _queryAdapter.queryStream('SELECT * FROM User WHERE id = ?1',
-        mapper: (Map<String, Object?> row) => User(
-            row['id'] as int,
-            row['user_name'] as String,
-            row['email'] as String,
-            row['password'] as String),
+  Stream<LocalUser?> watchUserById(String id) {
+    return _queryAdapter.queryStream('SELECT * FROM LocalUser WHERE id = ?1',
+        mapper: (Map<String, Object?> row) =>
+            LocalUser(row['id'] as String, row['user_name'] as String),
         arguments: [id],
-        queryableName: 'User',
+        queryableName: 'LocalUser',
         isView: false);
   }
 
   @override
-  Future<int?> getUserIdByName(String userName) async {
-    return _queryAdapter.query('SELECT id FROM User WHERE user_name = ?1',
-        mapper: (Map<String, Object?> row) => row.values.first as int,
+  Future<String?> getUserIdByName(String userName) async {
+    return _queryAdapter.query('SELECT id FROM LocalUser WHERE user_name = ?1',
+        mapper: (Map<String, Object?> row) => row.values.first as String,
         arguments: [userName]);
   }
 
   @override
+  Future<LocalUser?> getUserById(String id) async {
+    return _queryAdapter.query('SELECT * FROM LocalUser WHERE id = ?1',
+        mapper: (Map<String, Object?> row) =>
+            LocalUser(row['id'] as String, row['user_name'] as String),
+        arguments: [id]);
+  }
+
+  @override
   Future<void> deleteAllUsers() async {
-    await _queryAdapter.queryNoReturn('DELETE FROM User');
+    await _queryAdapter.queryNoReturn('DELETE FROM LocalUser');
   }
 
   @override
-  Future<void> insertUser(User user) async {
-    await _userInsertionAdapter.insert(user, OnConflictStrategy.abort);
+  Future<void> insertUser(LocalUser user) async {
+    await _localUserInsertionAdapter.insert(user, OnConflictStrategy.abort);
   }
 
   @override
-  Future<void> updateUser(User user) async {
-    await _userUpdateAdapter.update(user, OnConflictStrategy.replace);
+  Future<void> updateUser(LocalUser user) async {
+    await _localUserUpdateAdapter.update(user, OnConflictStrategy.replace);
   }
 
   @override
-  Future<void> deleteUser(User user) async {
-    await _userDeletionAdapter.delete(user);
+  Future<void> deleteUser(LocalUser user) async {
+    await _localUserDeletionAdapter.delete(user);
   }
 }
 
@@ -288,7 +278,7 @@ class _$RecordingDao extends RecordingDao {
     return _queryAdapter.queryList('SELECT * FROM Recording',
         mapper: (Map<String, Object?> row) => Recording(
             row['id'] as int,
-            row['user_id'] as int,
+            row['user_id'] as String,
             _dateTimeConverter.decode(row['recording_date'] as int),
             row['number_of_runs'] as int,
             row['max_speed'] as double,
@@ -301,12 +291,12 @@ class _$RecordingDao extends RecordingDao {
   }
 
   @override
-  Stream<List<Recording>> watchRecordingById(int id) {
+  Stream<List<Recording>> watchRecordingById(String id) {
     return _queryAdapter.queryListStream(
         'SELECT * FROM Recording WHERE user_id = ?1',
         mapper: (Map<String, Object?> row) => Recording(
             row['id'] as int,
-            row['user_id'] as int,
+            row['user_id'] as String,
             _dateTimeConverter.decode(row['recording_date'] as int),
             row['number_of_runs'] as int,
             row['max_speed'] as double,

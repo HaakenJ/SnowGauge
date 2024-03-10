@@ -13,16 +13,23 @@ class ScaffoldNavBar extends StatefulWidget {
 
 class _ScaffoldNavBarState extends State<ScaffoldNavBar> {
   int _currentIndex = 0;
-  static const String route1 = '/record-activity';
+  static const String route1 = '/login';
+  static const String route2 = '/record-activity';
   static const String route3 = '/history';
   static const String route4 = '/map';
 
   static const List<MyCustomBottomNavBarItem> tabs = [
     MyCustomBottomNavBarItem(
+      icon: Icon(Icons.list_alt_outlined),
+      activeIcon: Icon(Icons.list_alt),
+      label: 'LOGIN',
+      initialLocation: route1,
+    ),
+    MyCustomBottomNavBarItem(
       icon: Icon(Icons.downhill_skiing_outlined),
       activeIcon: Icon(Icons.downhill_skiing),
       label: 'RECORD',
-      initialLocation: route1,
+      initialLocation: route2,
     ),
     MyCustomBottomNavBarItem(
       icon: Icon(Icons.list_alt_outlined),
@@ -57,11 +64,11 @@ class _ScaffoldNavBarState extends State<ScaffoldNavBar> {
         },
         currentIndex: widget.location == route1
             ? 0
-            : widget.location == route3
+            : widget.location == route2
             ? 1
-            : widget.location == route4
+            : widget.location == route3
             ? 2
-            : 0,
+            : 3,
         items: tabs,
       ),
     );

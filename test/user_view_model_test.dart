@@ -5,14 +5,14 @@ import 'package:SnowGauge/dao/user_dao.dart';
 import 'package:SnowGauge/entities/user_entity.dart';
 
 class UserViewModel extends ChangeNotifier {
-  late UserDao _userDao;
-  late User currentUser = User(IdGenerator.generateId(), 'Bob', 'bob@bob.com', 'bobpass');
+  late LocalUserDao _userDao;
+  late LocalUser currentUser = LocalUser(IdGenerator.generateId(), 'Bob', 'bob@bob.com', 'bobpass');
   String currentUserName = 'Bob'; // hardcoded for now
 
   // Constructor
-  UserViewModel({UserDao? userDao}) {
+  UserViewModel({LocalUserDao? userDao}) {
     // If userDao is provided, use it. Otherwise, get it from GetIt.
-    _userDao = userDao ?? GetIt.instance.get<UserDao>();
+    _userDao = userDao ?? GetIt.instance.get<LocalUserDao>();
     _initializeUser();
   }
 
@@ -45,7 +45,7 @@ class UserViewModel extends ChangeNotifier {
 
   // Method to insert a new user
   Future<void> insertUser(String userName, String email, String password) async {
-    User newUser = User(IdGenerator.generateId(), userName, email, password);
+    LocalUser newUser = LocalUser(IdGenerator.generateId(), userName, email, password);
     await _userDao.insertUser(newUser);
     notifyListeners();
   }

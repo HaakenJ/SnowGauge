@@ -10,8 +10,8 @@ import 'dart:async';
 part 'database.g.dart'; // the generated code will be there
 
 @TypeConverters([DateTimeConverter])
-@Database(version: 1, entities: [User, Recording])
+@Database(version: 1, entities: [LocalUser, Recording])
 abstract class SnowGaugeDatabase extends FloorDatabase {
-  UserDao get userDao;
+  LocalUserDao get userDao;
   RecordingDao get recordingDao;
 }

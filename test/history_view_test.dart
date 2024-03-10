@@ -12,7 +12,7 @@ import 'package:SnowGauge/entities/recording_entity.dart';
 import 'package:SnowGauge/entities/user_entity.dart';
 
 class MockRecordingDao extends Mock implements RecordingDao {}
-class MockUserDao extends Mock implements UserDao {}
+class MockUserDao extends Mock implements LocalUserDao {}
 
 void main() {
   group('HistoryView', () {
@@ -23,7 +23,7 @@ void main() {
       final recordingDao = MockRecordingDao();
       final userDao = MockUserDao();
       GetIt.instance.registerSingleton<RecordingDao>(recordingDao);
-      GetIt.instance.registerSingleton<UserDao>(userDao);
+      GetIt.instance.registerSingleton<LocalUserDao>(userDao);
       recordingViewModel = RecordingViewModel();
       userViewModel = UserViewModel();
     });

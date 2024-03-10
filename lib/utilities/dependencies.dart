@@ -15,7 +15,7 @@ void registerDependencies() {
   );
 
   // register userDao
-  getIt.registerSingletonWithDependencies<UserDao>(() {
+  getIt.registerSingletonWithDependencies<LocalUserDao>(() {
     return GetIt.instance.get<SnowGaugeDatabase>().userDao;
   }, dependsOn: [SnowGaugeDatabase]);
 
@@ -27,7 +27,7 @@ void registerDependencies() {
   // register UserViewModel
   getIt.registerSingletonWithDependencies<UserViewModel>(
           () => UserViewModel(),
-      dependsOn: [SnowGaugeDatabase, UserDao]
+      dependsOn: [SnowGaugeDatabase, LocalUserDao]
   );
 
   // register RecordingViewModel

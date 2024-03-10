@@ -14,7 +14,7 @@ class Recording {
   @primaryKey
   final int id;
   @ColumnInfo(name: 'user_id')
-  int userId;
+  String userId;
   // stored as millisecondsFromEpoch
   @ColumnInfo(name: 'recording_date')
   DateTime recordingDate;

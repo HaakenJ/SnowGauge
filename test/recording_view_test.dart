@@ -1,64 +1,123 @@
-import 'package:SnowGauge/entities/user_entity.dart';
+import 'package:SnowGauge/entities/recording_entity.dart';
+import 'package:SnowGauge/entities/recording_entity.dart';
+import 'package:SnowGauge/utilities/id_generator.dart';
+import 'package:SnowGauge/utilities/dependencies.dart';
 import 'package:SnowGauge/view_models/recording_view_model.dart';
-import 'package:SnowGauge/view_models/user_view_model.dart';
 import 'package:SnowGauge/views/recording_view.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:provider/provider.dart';
 import 'package:mockito/mockito.dart';
+import 'package:provider/provider.dart';
+import 'MockRecordingViewModel.dart';
+import 'firebase_mock_setup.dart';
 
-class MockRecordingViewModel extends Mock implements RecordingViewModel {}
+class MockFirebaseAuth extends Mock implements FirebaseAuth {}
 
-class MockUserViewModel extends Mock implements UserViewModel {}
+void main() async {
 
-void main() {
-  late MockRecordingViewModel mockRecordingViewModel;
-  late MockUserViewModel mockUserViewModel;
+  setupFirebaseAuthMocks();
 
-  setUp(() {
-    mockRecordingViewModel = MockRecordingViewModel();
-    mockUserViewModel = MockUserViewModel();
+  setUpAll(() async {
+    await Firebase.initializeApp();
   });
 
-  Widget buildTestableWidget(Widget widget) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<RecordingViewModel>.value(
-          value: mockRecordingViewModel,
-        ),
-        ChangeNotifierProvider<UserViewModel>(
-          create: (_) => mockUserViewModel,
-        ),
-      ],
-      child: MaterialApp(home: widget),
-    );
-  }
+  registerDependencies();
 
-  testWidgets('RecordActivityView UI Test', (WidgetTester tester) async {
-    when(mockUserViewModel.currentUser).thenReturn(User(0, 'Bob', 'bob@bob.com', '123456'));
-    // Build our widget and trigger a frame.
-    await tester.pumpWidget(buildTestableWidget(RecordActivityView()));
+  group('RecordActivityView Widget Tests', () {
+    testWidgets('Widget shows "You must be signed in" when user is not signed in',
+            (WidgetTester tester) async {
+          final mockFirebaseAuth = MockFirebaseAuth();
+          final mockRecordingViewModel = MockRecordingViewModel();
 
-    // Verify that our Text widgets are displaying the correct text.
-    expect(find.text('Not Recording'), findsOneWidget);
-    expect(find.text('Start Recording'), findsOneWidget);
+          when(mockFirebaseAuth.currentUser).thenReturn(null);
 
-    // Simulate tapping on the start recording button
-    await tester.tap(find.text('Start Recording'));
-    verify(mockRecordingViewModel.requestPermission());
-    verify(mockRecordingViewModel.startRecording());
+          await tester.pumpWidget(
+            ChangeNotifierProvider<RecordingViewModel>.value(
+              value: mockRecordingViewModel,
+              child: MaterialApp(
+                home: RecordActivityView(auth: mockFirebaseAuth),
+              ),
+            ),
+          );
 
-    // Simulate tapping on the stop recording button
-    await tester.tap(find.text('Stop Recording'));
-    verify(mockRecordingViewModel.stopRecording());
-    verify(mockRecordingViewModel.discardRecording());
+          expect(find.text('You must be signed in to use this feature'), findsOneWidget);
+        });
 
-    // Simulate tapping on the save recording button
-    await tester.tap(find.text('Save'));
-    verify(mockRecordingViewModel.saveRecording());
+    testWidgets('Widget shows "Record Activity" when user is signed in',
+            (WidgetTester tester) async {
+          final mockFirebaseAuth = MockFirebaseAuth();
+          final mockRecordingViewModel = MockRecordingViewModel();
 
-    // Verify that the save or discard prompt is shown
-    expect(find.text('Save Recording?'), findsOneWidget);
-    expect(find.text('Do you want to save or discard the recording?'), findsOneWidget);
+
+          final tUser = MockUser(
+            isAnonymous: false,
+            uid: 'user_id',
+            email: 'user@example.com',
+            displayName: 'Test User',
+          );
+
+          when(mockFirebaseAuth.currentUser).thenReturn(tUser);
+
+          // when(mockRecordingViewModel.isRecording).thenReturn(false);
+
+          await tester.pumpWidget(
+            ChangeNotifierProvider<RecordingViewModel>.value(
+              value: mockRecordingViewModel,
+              child: MaterialApp(
+                home: RecordActivityView(auth: mockFirebaseAuth),
+              ),
+            ),
+          );
+
+          expect(find.text('Record Activity'), findsOneWidget);
+          expect(find.text('Not Recording'), findsOneWidget);
+
+          await tester.tap(find.text('Start Recording'));
+          await tester.pumpAndSettle();
+
+          expect(find.text('Recording...'), findsOneWidget);
+
+          await tester.tap(find.text('Pause'));
+          await tester.pumpAndSettle();
+
+          expect(find.text('Paused'), findsOneWidget);
+
+          await tester.tap(find.text('Resume'));
+          await tester.pumpAndSettle();
+
+          expect(find.text('Stop Recording'), findsOneWidget);
+
+          await tester.tap(find.text('Stop Recording'));
+          await tester.pumpAndSettle();
+
+          expect(find.text('Save Recording?'), findsOneWidget);
+
+          await tester.tap(find.text('Discard'));
+          await tester.pumpAndSettle();
+
+          expect(find.text('Recording Discarded!'), findsOneWidget);
+
+          await tester.tap(find.text('OK'));
+          await tester.pumpAndSettle();
+
+          await tester.tap(find.text('Start Recording'));
+          await tester.pumpAndSettle();
+
+          expect(find.text('Recording...'), findsOneWidget);
+          expect(find.text('Stop Recording'), findsOneWidget);
+
+          await tester.tap(find.text('Stop Recording'));
+          await tester.pumpAndSettle();
+
+          expect(find.text('Save Recording?'), findsOneWidget);
+
+          // await tester.tap(find.text('Save'));
+          // await tester.pumpAndSettle();
+          //
+          // await tester.tap(find.text('Start Recording'));
+        });
   });
 }

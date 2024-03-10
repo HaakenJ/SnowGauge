@@ -7,7 +7,8 @@ import 'loading_state_scaffold.dart';
 import '../views/login_view.dart';
 
 class SignedInDetector extends StatelessWidget {
-  const SignedInDetector({super.key});
+  final FirebaseAuth auth;
+  const SignedInDetector({super.key, required this.auth});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,7 @@ class SignedInDetector extends StatelessWidget {
           if(snapshot.data == null) {
             return const LoginView();
           }
-          return const RecordActivityView();
+          return RecordActivityView(auth: auth);
         }
         return const LoadingState(child: CircularProgressIndicator());
       },

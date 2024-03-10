@@ -1,16 +1,11 @@
-import 'dart:ffi';
-import 'dart:math';
-
 import 'package:SnowGauge/dao/recording_dao.dart';
 import 'package:SnowGauge/dao/user_dao.dart';
 import 'package:SnowGauge/utilities/id_generator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get_it/get_it.dart';
-
 import '../entities/recording_entity.dart';
-import '../entities/user_entity.dart';
-
 
 /*
   Class to contain logic for interacting with the recording dao
@@ -23,8 +18,7 @@ class RecordingViewModel extends ChangeNotifier {
   bool _isGoingDown = false;
   int _downStartTime = 0;
   double currentElevation = 0.0;
-  // the number of milliseconds between descent and ascent before logging a run
-  final int _runTimeInterval = 60000;
+  final int _runTimeInterval = 60000; // the number of milliseconds between descent and ascent before logging a run
   double maximumElevation = 0.0;
   double minimumElevation = 100000.00;
 
@@ -44,23 +38,30 @@ class RecordingViewModel extends ChangeNotifier {
   late Position currentPosition;
   late Recording record;
   late RecordingDao _recordingDao;
-  late UserDao _userDao;
-  late final int _userId;
+
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
   RecordingViewModel() {
-    // replace with Firebase auth call
-    _userId = 1234;
+    // final currentUser = auth.currentUser;
+    // if (currentUser != null) {
+    //   _userId = currentUser.uid;
+    // }
     _recordingDao = GetIt.instance.get<RecordingDao>();
-    _userDao = GetIt.instance.get<UserDao>();
-    _initializeRecording();
-    _watchRecordings();
+    initializeRecording();
+    watchRecordings();
   }
 
-  void _initializeRecording() {
+  void initializeRecording() {
+    String userId;
+    if (auth.currentUser != null) {
+      userId = auth.currentUser!.uid;
+    } else {
+      userId = IdGenerator.generateId().toString();
+    }
     // initialize a new recording
     record = Recording(
         IdGenerator.generateId(),  // id
-        _userId,                    // userId
+        userId,                    // userId
         DateTime.now(),            // recordingDate
         0,                         // numberOfRuns
         0.0,                       // maxSpeed
@@ -88,7 +89,7 @@ class RecordingViewModel extends ChangeNotifier {
 
   void startRecording() {
     isRecording = true;
-    _initializeRecording();
+    initializeRecording();
 
     const LocationSettings locationSettings = LocationSettings(
       accuracy: LocationAccuracy.best,
@@ -132,23 +133,20 @@ class RecordingViewModel extends ChangeNotifier {
   }
 
   void discardRecording() {
-    _initializeRecording();
+    initializeRecording();
     notifyListeners();
   }
 
   void saveRecording() {
-    _userDao.getUserIdByName('Bob').then((id) {
-      if (id != null) record.userId = id;
-      _recordingDao.insertRecording(record);
-      print('Record saved: \n'
-          'number runs: ${record.numberOfRuns}\n'
-          'max speed: ${record.maxSpeed}\n'
-          'average speed: ${record.averageSpeed}\n'
-          'total distance: ${record.totalDistance}\n'
-          'total descent: ${record.totalVertical}');
-      _initializeRecording();
-      notifyListeners();
-    });
+    _recordingDao.insertRecording(record);
+    print('Record saved: \n'
+        'number runs: ${record.numberOfRuns}\n'
+        'max speed: ${record.maxSpeed}\n'
+        'average speed: ${record.averageSpeed}\n'
+        'total distance: ${record.totalDistance}\n'
+        'total descent: ${record.totalVertical}');
+    initializeRecording();
+    notifyListeners();
   }
 
   void _updateElevation(Position pos) {
@@ -211,13 +209,14 @@ class RecordingViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _watchRecordings() {
-    _userDao.getUserIdByName('Bob').then((id) {
-      _recordingDao.watchRecordingById(id!).listen((recordings) {
+  void watchRecordings() {
+    if (auth.currentUser != null) {
+      String userId = auth.currentUser!.uid;
+      _recordingDao.watchRecordingById(userId).listen((recordings) {
         recordingHistory = recordings;
         notifyListeners();
       });
-    });
+    }
   }
 
 }

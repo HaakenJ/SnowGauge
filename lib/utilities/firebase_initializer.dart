@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:SnowGauge/utilities/sign_in_detector.dart';
@@ -6,7 +7,8 @@ import '../firebase_options.dart';
 import 'loading_state_scaffold.dart';
 
 class FirebaseInitializer extends StatelessWidget {
-  const FirebaseInitializer({super.key});
+  final FirebaseAuth auth;
+  const FirebaseInitializer({super.key, required this.auth});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +18,7 @@ class FirebaseInitializer extends StatelessWidget {
       ),
       builder: (context, snapshot) {
         if(snapshot.hasData) {
-          return const SignedInDetector();
+          return SignedInDetector(auth: auth);
         } else if(snapshot.hasError) {
           return const LoadingState(child: Text('Oh no! You can\'t connect to Firebase.'));
         }
