@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class ScaffoldNavBar extends StatefulWidget {
-  String location;
-  ScaffoldNavBar({super.key, required this.child, required this.location});
-
+  final String location;
   final Widget child;
+
+  const ScaffoldNavBar({
+    super.key,
+    required this.child,
+    required this.location
+  });
 
   @override
   State<ScaffoldNavBar> createState() => _ScaffoldNavBarState();
@@ -54,9 +58,10 @@ class _ScaffoldNavBarState extends State<ScaffoldNavBar> {
       bottomNavigationBar: BottomNavigationBar(
         selectedLabelStyle: labelStyle,
         unselectedLabelStyle: labelStyle,
-        selectedItemColor: const Color(0xFF434343),
+
+        selectedItemColor: Theme.of(context).primaryColor,
+        unselectedItemColor: Colors.grey,
         selectedFontSize: 12,
-        unselectedItemColor: const Color(0xFF838383),
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
         onTap: (int index) {

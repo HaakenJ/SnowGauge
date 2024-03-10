@@ -24,8 +24,11 @@ class _HistoryViewState extends State<HistoryView> {
         ),
         body: const Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('You must be signed in to use this feature')
+              Text('You must be signed in to use this feature',
+              style: TextStyle(fontSize: 18),
+              )
             ],
           ),
         ),
@@ -46,10 +49,52 @@ class _HistoryViewState extends State<HistoryView> {
     }
   }
 
+
+  // Widget _buildRecordItem(Recording record, String userName) {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(8.0),
+  //     child: Card(
+  //       elevation: 4,
+  //       child: Padding(
+  //         padding: const EdgeInsets.all(16.0),
+  //         child: Column(
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             Text(
+  //               'User: $userName',
+  //               style: const TextStyle(fontWeight: FontWeight.bold),
+  //             ),
+  //             const SizedBox(height: 8),
+  //             _buildRecordInfo('Recording Date', record.recordingDate as String),
+  //             _buildRecordInfo('Number of Runs', record.numberOfRuns.toString()),
+  //             _buildRecordInfo('Max Speed', '${record.maxSpeed} km/h'),
+  //
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+  //
+  // Widget _buildRecordInfo(String label, String value) {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(vertical: 4),
+  //     child: Row(
+  //       children: [
+  //         Text(
+  //           '$label: ',
+  //           style: const TextStyle(fontWeight: FontWeight.bold),
+  //         ),
+  //         Text(value),
+  //       ],
+  //     ),
+  //   );
+  // }
   Widget _buildRecordItem(Recording record, String userName) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Card(
+        // elevation: 4,
         child: ListTile(
           title: Text('User: $userName'),
           tileColor: Colors.teal[100],

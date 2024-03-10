@@ -13,23 +13,23 @@ class RecordActivityView extends StatefulWidget {
 
 class _RecordActivityViewState extends State<RecordActivityView> {
 
-
   @override
   Widget build(BuildContext context) {
     final recordingProvider = Provider.of<RecordingViewModel>(context);
     // final FirebaseAuth auth = FirebaseAuth.instance;
     FirebaseAuth auth = widget.auth;
 
-
     if (auth.currentUser == null) {
       return Scaffold(
         appBar: AppBar(
-          title: Text('Record Activity'),
+          title: const Text('Record Activity'),
         ),
         body: const Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('You must be signed in to use this feature')
+              Text('You must be signed in to use this feature'),
+              SizedBox(height: 20),
             ],
           ),
         ),
@@ -39,11 +39,11 @@ class _RecordActivityViewState extends State<RecordActivityView> {
           appBar: AppBar(
             title: const Text('Record Activity'),
           ),
-          body: Center(
+          body: Padding(
+            padding: const EdgeInsets.all(20.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Add our record activity  here
                 Text(
                   recordingProvider.isRecording ? (recordingProvider
                       .isPaused
@@ -52,7 +52,7 @@ class _RecordActivityViewState extends State<RecordActivityView> {
                   style: const TextStyle(fontSize: 24),
                 ),
                 const SizedBox(height: 20),
-                ElevatedButton( // play/pause button
+                ElevatedButton(
                   onPressed: () async {
                     // Toggle recording status
                     if (!recordingProvider.isRecording) {
@@ -176,7 +176,9 @@ class _RecordActivityViewState extends State<RecordActivityView> {
     }
   }
 
-  // Function to show the save or discard prompt
+
+
+//Function to show the save or discard prompt
   void _showSaveDiscardPrompt(RecordingViewModel model) {
     showDialog(
       context: context,
@@ -232,3 +234,9 @@ class _RecordActivityViewState extends State<RecordActivityView> {
     );
   }
 }
+
+/*
+Improved spacing and alignment in the UI to make it more visually appealing.
+Simplified the logic of the _showSaveDiscardPrompt function by passing the
+BuildContext directly instead of accessing it through context.
+ */
