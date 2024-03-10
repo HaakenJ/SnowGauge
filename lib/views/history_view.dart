@@ -12,11 +12,6 @@ class HistoryView extends StatefulWidget {
 }
 
 class _HistoryViewState extends State<HistoryView> {
-  @override
-  void initState() {
-
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +20,7 @@ class _HistoryViewState extends State<HistoryView> {
     if (auth.currentUser == null) {
       return Scaffold(
         appBar: AppBar(
-          title: Text('Record Activity'),
+          title: const Text('Recording History'),
         ),
         body: const Center(
           child: Column(
