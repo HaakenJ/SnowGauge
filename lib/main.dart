@@ -9,11 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'firebase_options.dart';
 import 'views/history_view.dart';
-import 'views/user_account_view.dart';
 import 'views/recording_view.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
-import 'package:SnowGauge/common/theme.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -32,7 +30,6 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp.router(
         title: 'SnowGauge',
-        theme: appTheme,
         routerConfig: router(),
       )
     );
@@ -106,15 +103,6 @@ GoRouter router() {
                   pageBuilder: (context, state) {
                     return const NoTransitionPage(
                       child: HistoryView(),
-                    );
-                  }
-              ),
-              GoRoute(
-                  path: '/user-account',
-                  parentNavigatorKey: _shellNavigatorKey,
-                  pageBuilder: (context, state) {
-                    return const NoTransitionPage(
-                      child: UserAccountView(),
                     );
                   }
               ),
