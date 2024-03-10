@@ -46,7 +46,7 @@ void main() async {
           expect(find.text('You must be signed in to use this feature'), findsOneWidget);
         });
 
-    testWidgets('Widget shows "Record Activity" when user is signed in',
+    testWidgets('Test recording workflow',
             (WidgetTester tester) async {
           final mockFirebaseAuth = MockFirebaseAuth();
           final mockRecordingViewModel = MockRecordingViewModel();
