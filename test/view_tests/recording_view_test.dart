@@ -1,6 +1,3 @@
-import 'package:SnowGauge/entities/recording_entity.dart';
-import 'package:SnowGauge/entities/recording_entity.dart';
-import 'package:SnowGauge/utilities/id_generator.dart';
 import 'package:SnowGauge/utilities/dependencies.dart';
 import 'package:SnowGauge/view_models/recording_view_model.dart';
 import 'package:SnowGauge/views/recording_view.dart';
@@ -11,8 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
-import 'MockRecordingViewModel.dart';
-import 'firebase_mock_setup.dart';
+import '../test_utils/mock_recording_view_model.dart';
+import '../test_utils/firebase_mock_setup.dart';
 
 class MockFirebaseAuth extends Mock implements FirebaseAuth {}
 
@@ -24,13 +21,13 @@ void main() async {
     await Firebase.initializeApp();
   });
 
-  registerDependencies();
-
   group('RecordActivityView Widget Tests', () {
     testWidgets('Widget shows "You must be signed in" when user is not signed in',
             (WidgetTester tester) async {
           final mockFirebaseAuth = MockFirebaseAuth();
           final mockRecordingViewModel = MockRecordingViewModel();
+
+          registerDependencies(mockFirebaseAuth);
 
           when(mockFirebaseAuth.currentUser).thenReturn(null);
 

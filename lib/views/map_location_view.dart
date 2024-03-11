@@ -6,11 +6,11 @@ class MapLocationView extends StatefulWidget {
   const MapLocationView({Key? key}) : super(key: key);
 
   @override
-  _MapLocationViewState createState() => _MapLocationViewState();
+  MapLocationViewState createState() => MapLocationViewState();
 }
 
-class _MapLocationViewState extends State<MapLocationView> {
-  final Completer<GoogleMapController> _controller = Completer();
+class MapLocationViewState extends State<MapLocationView> {
+  final Completer<GoogleMapController> mapController = Completer();
   static const CameraPosition _position = CameraPosition(
     target: LatLng(46.93526, -121.47456),
     zoom: 14,
@@ -26,7 +26,7 @@ class _MapLocationViewState extends State<MapLocationView> {
           myLocationEnabled: true,
           compassEnabled: true,
           onMapCreated: (GoogleMapController controller){
-            _controller.complete(controller);
+            mapController.complete(controller);
           },
         ),
       ),

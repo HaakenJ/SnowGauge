@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         // hardcoding a userId until login is set up
-        ChangeNotifierProvider(create: (context) => RecordingViewModel()),
+        ChangeNotifierProvider(create: (context) => RecordingViewModel(auth)),
       ],
       child: MaterialApp.router(
         title: 'SnowGauge',
@@ -41,7 +41,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  registerDependencies();
+  registerDependencies(auth);
   runApp(const MyApp());
 }
 
@@ -101,8 +101,8 @@ GoRouter router() {
                   path: '/history',
                   parentNavigatorKey: _shellNavigatorKey,
                   pageBuilder: (context, state) {
-                    return const NoTransitionPage(
-                      child: HistoryView(),
+                    return NoTransitionPage(
+                      child: HistoryView(auth: auth,),
                     );
                   }
               ),

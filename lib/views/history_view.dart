@@ -5,7 +5,8 @@ import 'package:provider/provider.dart';
 import '../view_models/recording_view_model.dart';
 
 class HistoryView extends StatefulWidget {
-  const HistoryView({super.key});
+  final FirebaseAuth auth;
+  const HistoryView({super.key, required this.auth});
 
   @override
   _HistoryViewState createState() => _HistoryViewState();
@@ -16,8 +17,7 @@ class _HistoryViewState extends State<HistoryView> {
   @override
   Widget build(BuildContext context) {
     final recordingProvider = Provider.of<RecordingViewModel>(context);
-    final FirebaseAuth auth = FirebaseAuth.instance;
-    if (auth.currentUser == null) {
+    if (widget.auth.currentUser == null) {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Recording History'),
@@ -42,54 +42,13 @@ class _HistoryViewState extends State<HistoryView> {
           itemCount: recordingProvider.recordingHistory.length,
           itemBuilder: (context, index) {
             final record = recordingProvider.recordingHistory[index];
-            return _buildRecordItem(record, auth.currentUser!.email!);
+            return _buildRecordItem(record, widget.auth.currentUser!.email!);
           },
         ),
       );
     }
   }
 
-
-  // Widget _buildRecordItem(Recording record, String userName) {
-  //   return Padding(
-  //     padding: const EdgeInsets.all(8.0),
-  //     child: Card(
-  //       elevation: 4,
-  //       child: Padding(
-  //         padding: const EdgeInsets.all(16.0),
-  //         child: Column(
-  //           crossAxisAlignment: CrossAxisAlignment.start,
-  //           children: [
-  //             Text(
-  //               'User: $userName',
-  //               style: const TextStyle(fontWeight: FontWeight.bold),
-  //             ),
-  //             const SizedBox(height: 8),
-  //             _buildRecordInfo('Recording Date', record.recordingDate as String),
-  //             _buildRecordInfo('Number of Runs', record.numberOfRuns.toString()),
-  //             _buildRecordInfo('Max Speed', '${record.maxSpeed} km/h'),
-  //
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-  //
-  // Widget _buildRecordInfo(String label, String value) {
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(vertical: 4),
-  //     child: Row(
-  //       children: [
-  //         Text(
-  //           '$label: ',
-  //           style: const TextStyle(fontWeight: FontWeight.bold),
-  //         ),
-  //         Text(value),
-  //       ],
-  //     ),
-  //   );
-  // }
   Widget _buildRecordItem(Recording record, String userName) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),

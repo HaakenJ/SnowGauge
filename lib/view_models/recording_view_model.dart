@@ -14,10 +14,10 @@ class RecordingViewModel extends ChangeNotifier {
   bool isPaused = false;
 
   // ELEVATION VARIABLES
-  bool _isGoingDown = false;
-  int _downStartTime = 0;
+  bool isGoingDown = false;
+  int downStartTime = 0;
   double currentElevation = 0.0;
-  final int _runTimeInterval = 60000; // the number of milliseconds between descent and ascent before logging a run
+  int runTimeInterval = 5000; // the number of milliseconds between descent and ascent before logging a run
   double maximumElevation = 0.0;
   double minimumElevation = 100000.00;
 
@@ -33,21 +33,28 @@ class RecordingViewModel extends ChangeNotifier {
   List<Recording> recordingHistory = [];
 
   bool permissionGranted = false;
-  final GeolocatorPlatform _geolocator = GeolocatorPlatform.instance;
+  GeolocatorPlatform _geolocator = GeolocatorPlatform.instance;
   late Position currentPosition;
   late Recording record;
   late RecordingDao _recordingDao;
 
-  final FirebaseAuth auth = FirebaseAuth.instance;
+  late final FirebaseAuth auth;
 
-  RecordingViewModel() {
-    // final currentUser = auth.currentUser;
-    // if (currentUser != null) {
-    //   _userId = currentUser.uid;
-    // }
-    _recordingDao = GetIt.instance.get<RecordingDao>();
+  RecordingViewModel(this.auth) {
+    try {
+      _recordingDao = GetIt.instance.get<RecordingDao>();
+    } on Exception catch (ex) {}
+
     initializeRecording();
     watchRecordings();
+  }
+
+  void setRecordingDao(RecordingDao dao) {
+    _recordingDao = dao;
+  }
+
+  void setGeolocatorPlatform(GeolocatorPlatform geolocator) {
+    _geolocator = geolocator;
   }
 
   void initializeRecording() {
@@ -86,14 +93,9 @@ class RecordingViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void startRecording() {
+  void startRecording(LocationSettings locationSettings) {
     isRecording = true;
     initializeRecording();
-
-    const LocationSettings locationSettings = LocationSettings(
-      accuracy: LocationAccuracy.best,
-      distanceFilter: 0, // number of meters the user must move to update location
-    );
 
     // set the date of the recording
     record.recordingDate = DateTime.now();
@@ -101,8 +103,8 @@ class RecordingViewModel extends ChangeNotifier {
     _geolocator.getPositionStream(locationSettings: locationSettings).listen((Position position) {
       if (isRecording && !isPaused) {
         currentPosition = position;
-        _updateElevation(position);
-        _updateSpeed(position);
+        updateElevation(position);
+        updateSpeed(position);
         print('Current info: number runs: ${record.numberOfRuns}\n'
             'max speed: ${record.maxSpeed}\n'
             'average speed: ${record.averageSpeed}\n'
@@ -148,22 +150,22 @@ class RecordingViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _updateElevation(Position pos) {
+  void updateElevation(Position pos) {
     double newElevation = pos.altitude; // altitude is in meters
 
     if (newElevation < currentElevation) { // check if the user is going downhill
-      if (!_isGoingDown) { // check if they were already going downhill,
-        _isGoingDown = true; // flag that they are descending
-        _downStartTime = DateTime.now().millisecondsSinceEpoch; // log the time they started the descent
+      if (!isGoingDown) { // check if they were already going downhill,
+        isGoingDown = true; // flag that they are descending
+        downStartTime = DateTime.now().millisecondsSinceEpoch; // log the time they started the descent
       }
       record.totalVertical += currentElevation - newElevation; // update total elevation descended
     } else { // the user is ascending
-      if (_isGoingDown) { // were they descending before this?
-        int downDuration = DateTime.now().millisecondsSinceEpoch - _downStartTime; // how long they were descending before the ascent
-        if (downDuration > _runTimeInterval) {
+      if (isGoingDown) { // were they descending before this?
+        int downDuration = DateTime.now().millisecondsSinceEpoch - downStartTime; // how long they were descending before the ascent
+        if (downDuration > runTimeInterval) {
           record.numberOfRuns++; // user descended long enough to count as a run
         }
-        _isGoingDown = false; // mark that the user is now ascending
+        isGoingDown = false; // mark that the user is now ascending
       }
     }
     currentElevation = newElevation;
@@ -180,7 +182,7 @@ class RecordingViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _updateSpeed(Position pos) {
+  void updateSpeed(Position pos) {
     double speed = pos.speed ?? 0; // speed is in meters per second
 
     // update max speed

@@ -1,7 +1,10 @@
 import 'package:SnowGauge/entities/recording_entity.dart';
 import 'package:SnowGauge/utilities/id_generator.dart';
 import 'package:SnowGauge/view_models/recording_view_model.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:mockito/mockito.dart';
+
+import 'recording_view_model_test.mocks.dart';
 
 class MockRecordingViewModel extends Mock implements RecordingViewModel {
   @override
@@ -24,13 +27,15 @@ class MockRecordingViewModel extends Mock implements RecordingViewModel {
   bool permissionGranted = false;
   @override
   bool isPaused = false;
+  @override
+  List<Recording> recordingHistory = [];
 
   @override
   Future<void> requestPermission() async {
     permissionGranted = true;
   }
   @override
-  void startRecording() {
+  void startRecording(LocationSettings locationSettings) {
     isRecording = true;
   }
 

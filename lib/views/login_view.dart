@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import '../auth_service.dart';
 
 class LoginView extends StatefulWidget {
-  const LoginView({Key? key}) : super(key: key);
+  final FirebaseAuth auth;
+  const LoginView({super.key, required this.auth});
 
   @override
   _LoginViewState createState() => _LoginViewState();
@@ -17,7 +18,7 @@ class _LoginViewState extends State<LoginView> {
 
   void _onSignUp() async {
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      await widget.auth.createUserWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
@@ -35,7 +36,7 @@ class _LoginViewState extends State<LoginView> {
 
   void _onSignIn() async {
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await widget.auth.signInWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
@@ -99,85 +100,3 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 }
-
-
-/*
-The text input fields have been wrapped with TextFormField for better validation and styling options.
-Added prefixIcon to the text input fields for a better visual representation.
-Encapsulated UI elements within Padding and SizedBox widgets for better spacing and alignment.
-Displayed error messages in red color if authentication fails.
-Improved UI layout with CrossAxisAlignment.stretch for better utilization of screen space.
- */
-
-
-
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:flutter/material.dart';
-// import '../auth_service.dart';
-//
-// class LoginView extends StatefulWidget {
-//   const LoginView({super.key});
-//
-//   @override
-//   _LoginViewState createState() => _LoginViewState();
-// }
-//
-// class _LoginViewState extends State<LoginView> {
-//   final TextEditingController _emailController = TextEditingController();
-//   final TextEditingController _passwordController = TextEditingController();
-//
-//   String? _firebaseErrorCode;
-//
-//   _onSignUp() async {
-//     try {
-//       await FirebaseAuth.instance.createUserWithEmailAndPassword(
-//         email: _emailController.text,
-//         password: _passwordController.text,
-//       );
-//       setState(() {
-//         _firebaseErrorCode = null;
-//       });
-//     } on FirebaseAuthException catch (ex) {
-//       print(ex.code);
-//       print(ex.message);
-//       setState(() {
-//         _firebaseErrorCode = ex.code;
-//       });
-//     }
-//   }
-//
-//   _onSignIn() {
-//     FirebaseAuth.instance.signInWithEmailAndPassword(
-//       email: _emailController.text,
-//       password: _passwordController.text,
-//     );
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(),
-//       body: SingleChildScrollView(
-//         child: Column(
-//             children: [
-//               TextField(
-//                 controller: _emailController,
-//               ),
-//               TextField(
-//                 controller: _passwordController,
-//               ),
-//               ElevatedButton(
-//                 child: const Text('Sign up'),
-//                 onPressed: _onSignUp,
-//               ),
-//               ElevatedButton(
-//                 child: const Text('Sign in'),
-//                 onPressed: _onSignIn,
-//               ),
-//               if(_firebaseErrorCode != null) Text(_firebaseErrorCode!)
-//             ]
-//         ),
-//       ),
-//     );
-//   }
-// }

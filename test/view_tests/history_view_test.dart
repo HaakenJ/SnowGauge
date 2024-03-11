@@ -1,5 +1,8 @@
+import 'package:SnowGauge/entities/recording_entity.dart';
 import 'package:SnowGauge/utilities/dependencies.dart';
+import 'package:SnowGauge/utilities/id_generator.dart';
 import 'package:SnowGauge/view_models/recording_view_model.dart';
+import 'package:SnowGauge/views/history_view.dart';
 import 'package:SnowGauge/views/recording_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
@@ -8,8 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
-import 'MockRecordingViewModel.dart';
-import 'firebase_mock_setup.dart';
+import '../test_utils/mock_recording_view_model.dart';
+import '../test_utils/firebase_mock_setup.dart';
 
 class MockFirebaseAuth extends Mock implements FirebaseAuth {}
 
@@ -21,13 +24,13 @@ void main() async {
     await Firebase.initializeApp();
   });
 
-  registerDependencies();
-
   group('HistoryView Widget Tests', () {
     testWidgets('Widget shows "You must be signed in" when user is not signed in',
             (WidgetTester tester) async {
           final mockFirebaseAuth = MockFirebaseAuth();
           final mockRecordingViewModel = MockRecordingViewModel();
+
+          registerDependencies(mockFirebaseAuth);
 
           when(mockFirebaseAuth.currentUser).thenReturn(null);
 
@@ -35,7 +38,7 @@ void main() async {
             ChangeNotifierProvider<RecordingViewModel>.value(
               value: mockRecordingViewModel,
               child: MaterialApp(
-                home: RecordActivityView(auth: mockFirebaseAuth),
+                home: HistoryView(auth: mockFirebaseAuth),
               ),
             ),
           );
@@ -43,11 +46,10 @@ void main() async {
           expect(find.text('You must be signed in to use this feature'), findsOneWidget);
         });
 
-    testWidgets('Widget shows "Record Activity" when user is signed in',
+    testWidgets('Widget shows historical recordings when present',
             (WidgetTester tester) async {
           final mockFirebaseAuth = MockFirebaseAuth();
           final mockRecordingViewModel = MockRecordingViewModel();
-
 
           final tUser = MockUser(
             isAnonymous: false,
@@ -58,63 +60,42 @@ void main() async {
 
           when(mockFirebaseAuth.currentUser).thenReturn(tUser);
 
-          // when(mockRecordingViewModel.isRecording).thenReturn(false);
+          await tester.pumpWidget(
+            ChangeNotifierProvider<RecordingViewModel>.value(
+              value: mockRecordingViewModel,
+              child: MaterialApp(
+                home: HistoryView(auth: mockFirebaseAuth),
+              ),
+            ),
+          );
+          expect(find.text('Recording Date: '), findsNothing);
+
+          Recording historicalRecord = Recording(
+              IdGenerator.generateId(),  // id
+              'user_id',                    // userId
+              DateTime.now(),            // recordingDate
+              3,                         // numberOfRuns
+              10.0,                       // maxSpeed
+              2.0,                       // averageSpeed
+              3.0,                       // totalDistance
+              4.0,                       // totalVertical
+              5,                         // maxElevation
+              5,                         // minElevation
+              5                          // duration
+          );
+
+          mockRecordingViewModel.recordingHistory.add(historicalRecord);
 
           await tester.pumpWidget(
             ChangeNotifierProvider<RecordingViewModel>.value(
               value: mockRecordingViewModel,
               child: MaterialApp(
-                home: RecordActivityView(auth: mockFirebaseAuth),
+                home: HistoryView(auth: mockFirebaseAuth),
               ),
             ),
           );
 
-          expect(find.text('Record Activity'), findsOneWidget);
-          expect(find.text('Not Recording'), findsOneWidget);
-
-          await tester.tap(find.text('Start Recording'));
-          await tester.pumpAndSettle();
-
-          expect(find.text('Recording...'), findsOneWidget);
-
-          await tester.tap(find.text('Pause'));
-          await tester.pumpAndSettle();
-
-          expect(find.text('Paused'), findsOneWidget);
-
-          await tester.tap(find.text('Resume'));
-          await tester.pumpAndSettle();
-
-          expect(find.text('Stop Recording'), findsOneWidget);
-
-          await tester.tap(find.text('Stop Recording'));
-          await tester.pumpAndSettle();
-
-          expect(find.text('Save Recording?'), findsOneWidget);
-
-          await tester.tap(find.text('Discard'));
-          await tester.pumpAndSettle();
-
-          expect(find.text('Recording Discarded!'), findsOneWidget);
-
-          await tester.tap(find.text('OK'));
-          await tester.pumpAndSettle();
-
-          await tester.tap(find.text('Start Recording'));
-          await tester.pumpAndSettle();
-
-          expect(find.text('Recording...'), findsOneWidget);
-          expect(find.text('Stop Recording'), findsOneWidget);
-
-          await tester.tap(find.text('Stop Recording'));
-          await tester.pumpAndSettle();
-
-          expect(find.text('Save Recording?'), findsOneWidget);
-
-          // await tester.tap(find.text('Save'));
-          // await tester.pumpAndSettle();
-          //
-          // await tester.tap(find.text('Start Recording'));
+          expect(find.text('Number of Runs: 3'), findsOneWidget);
         });
   });
 }

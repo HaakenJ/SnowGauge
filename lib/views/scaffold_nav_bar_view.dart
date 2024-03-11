@@ -12,11 +12,11 @@ class ScaffoldNavBar extends StatefulWidget {
   });
 
   @override
-  State<ScaffoldNavBar> createState() => _ScaffoldNavBarState();
+  State<ScaffoldNavBar> createState() => ScaffoldNavBarState();
 }
 
-class _ScaffoldNavBarState extends State<ScaffoldNavBar> {
-  int _currentIndex = 0;
+class ScaffoldNavBarState extends State<ScaffoldNavBar> {
+  int currentIndex = 0;
   static const String route1 = '/login';
   static const String route2 = '/record-activity';
   static const String route3 = '/history';
@@ -80,12 +80,12 @@ class _ScaffoldNavBarState extends State<ScaffoldNavBar> {
   }
 
   void _goOtherTab(BuildContext context, int index) {
-    if (index == _currentIndex) return;
+    if (index == currentIndex) return;
     GoRouter router = GoRouter.of(context);
     String location = tabs[index].initialLocation;
 
     setState(() {
-      _currentIndex = index;
+      currentIndex = index;
     });
     router.go(location);
   }

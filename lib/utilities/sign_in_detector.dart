@@ -16,11 +16,11 @@ class SignedInDetector extends StatelessWidget {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if(snapshot.hasError) {
-          return const LoginView();
+          return LoginView(auth: auth);
         }
         if(snapshot.connectionState == ConnectionState.active) {
           if(snapshot.data == null) {
-            return const LoginView();
+            return LoginView(auth: auth);
           }
           return RecordActivityView(auth: auth);
         }

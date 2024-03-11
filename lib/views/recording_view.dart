@@ -1,6 +1,7 @@
 import 'package:SnowGauge/view_models/recording_view_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 
 class RecordActivityView extends StatefulWidget {
@@ -16,7 +17,6 @@ class _RecordActivityViewState extends State<RecordActivityView> {
   @override
   Widget build(BuildContext context) {
     final recordingProvider = Provider.of<RecordingViewModel>(context);
-    // final FirebaseAuth auth = FirebaseAuth.instance;
     FirebaseAuth auth = widget.auth;
 
     if (auth.currentUser == null) {
@@ -61,7 +61,11 @@ class _RecordActivityViewState extends State<RecordActivityView> {
                       }
 
                       if (recordingProvider.permissionGranted) {
-                        recordingProvider.startRecording();
+                        const LocationSettings locationSettings = LocationSettings(
+                          accuracy: LocationAccuracy.best,
+                          distanceFilter: 0, // number of meters the user must move to update location
+                        );
+                        recordingProvider.startRecording(locationSettings);
                       }
                     } else {
                       // pause/resume recording as it is already recording
