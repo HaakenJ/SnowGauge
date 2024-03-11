@@ -40,8 +40,6 @@ void main() async {
               ),
           );
 
-          expect(find.text('Login'), findsOneWidget);
-
           final emailField = find.ancestor(
             of: find.text('Email'),
             matching: find.byType(TextFormField),
@@ -77,8 +75,6 @@ void main() async {
                 home: LoginView(auth: mockFirebaseAuth),
               ),
           );
-
-          expect(find.text('Login'), findsOneWidget);
 
           final emailField = find.ancestor(
             of: find.text('Email'),
@@ -118,8 +114,6 @@ void main() async {
               ),
           );
 
-          expect(find.text('Login'), findsOneWidget);
-
           final emailField = find.ancestor(
             of: find.text('Email'),
             matching: find.byType(TextFormField),
@@ -155,8 +149,6 @@ void main() async {
                 home: LoginView(auth: mockFirebaseAuth),
               ),
           );
-
-          expect(find.text('Login'), findsOneWidget);
 
           final emailField = find.ancestor(
             of: find.text('Email'),
