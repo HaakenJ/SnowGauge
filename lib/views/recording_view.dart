@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 
+import '../utilities/unit_converter.dart';
+
 class RecordActivityView extends StatefulWidget {
   final FirebaseAuth auth;
   const RecordActivityView({super.key, required this.auth});
@@ -112,8 +114,8 @@ class _RecordActivityViewState extends State<RecordActivityView> {
                                 padding: const EdgeInsets.all(8),
                                 color: Colors.teal[100],
                                 child: Text(
-                                  "Duration \n\n ${recordingProvider.record
-                                      .duration}",
+                                  "Duration \n\n ${formatDuration(recordingProvider.record
+                                      .duration)}",
                                   textAlign: TextAlign.center,
                                 ),
                               ),
@@ -133,9 +135,9 @@ class _RecordActivityViewState extends State<RecordActivityView> {
                                 padding: const EdgeInsets.all(8),
                                 color: Colors.teal[100],
                                 child: Text(
-                                  "Total Distance \n\n ${recordingProvider
+                                  "Total Distance \n\n ${convertMetersToMiles(recordingProvider
                                       .record
-                                      .totalDistance}",
+                                      .totalDistance)}m",
                                   textAlign: TextAlign.center,
                                 ),
                               ),
@@ -144,8 +146,8 @@ class _RecordActivityViewState extends State<RecordActivityView> {
                                 padding: const EdgeInsets.all(8),
                                 color: Colors.teal[100],
                                 child: Text(
-                                  "Total Descent \n\n ${recordingProvider.record
-                                      .totalVertical}",
+                                  "Total Descent \n\n ${convertMetersToFeet(recordingProvider.record
+                                      .totalVertical)} ft",
                                   textAlign: TextAlign.center,
                                 ),
                               ),
@@ -154,8 +156,8 @@ class _RecordActivityViewState extends State<RecordActivityView> {
                                 padding: const EdgeInsets.all(8),
                                 color: Colors.teal[100],
                                 child: Text(
-                                  "Max speed \n\n ${recordingProvider.record
-                                      .maxSpeed}",
+                                  "Max speed \n\n ${convertMetersPerSecondToMilesPerHour(recordingProvider.record
+                                      .maxSpeed)} mph",
                                   textAlign: TextAlign.center,
                                 ),
                               ),
@@ -164,8 +166,8 @@ class _RecordActivityViewState extends State<RecordActivityView> {
                                 padding: const EdgeInsets.all(8),
                                 color: Colors.teal[100],
                                 child: Text(
-                                  "Average Speed \n\n ${recordingProvider.record
-                                      .averageSpeed}",
+                                  "Average Speed \n\n ${convertMetersPerSecondToMilesPerHour(recordingProvider.record
+                                      .averageSpeed)} mph",
                                   textAlign: TextAlign.center,
                                 ),
                               ),

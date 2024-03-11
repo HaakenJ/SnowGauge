@@ -12,7 +12,7 @@ class Recording {
   DateTime recordingDate;
   @ColumnInfo(name: 'number_of_runs')
   int numberOfRuns;
-  // speed stored in km/h
+  // speed stored in meters per second
   @ColumnInfo(name: 'max_speed')
   double maxSpeed;
   @ColumnInfo(name: 'average_speed')

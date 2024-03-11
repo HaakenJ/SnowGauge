@@ -1,4 +1,5 @@
 import 'package:SnowGauge/entities/recording_entity.dart';
+import 'package:SnowGauge/utilities/unit_converter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -62,13 +63,13 @@ class _HistoryViewState extends State<HistoryView> {
             children: [
               Text('Recording Date: ${record.recordingDate}'),
               Text('Number of Runs: ${record.numberOfRuns}'),
-              Text('Max Speed: ${record.maxSpeed}'),
-              Text('Average Speed: ${record.averageSpeed}'),
-              Text('Total Distance: ${record.totalDistance}'),
-              Text('Total Vertical: ${record.totalVertical}'),
-              Text('Max Elevation: ${record.maxElevation}'),
-              Text('Min Elevation: ${record.minElevation}'),
-              Text('Duration: ${record.duration}'),
+              Text('Max Speed: ${convertMetersPerSecondToMilesPerHour(record.maxSpeed)}'),
+              Text('Average Speed: ${convertMetersPerSecondToMilesPerHour(record.averageSpeed)}'),
+              Text('Total Distance: ${convertMetersToMiles(record.totalDistance)}'),
+              Text('Total Vertical: ${convertMetersToFeet(record.totalVertical)}'),
+              Text('Max Elevation: ${convertMetersToFeet(record.maxElevation)}'),
+              Text('Min Elevation: ${convertMetersToFeet(record.minElevation)}'),
+              Text('Duration: ${formatDuration(record.duration)}'),
             ],
           ),
         ),
