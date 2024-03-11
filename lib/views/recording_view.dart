@@ -137,7 +137,7 @@ class _RecordActivityViewState extends State<RecordActivityView> {
                                 child: Text(
                                   "Total Distance \n\n ${convertMetersToMiles(recordingProvider
                                       .record
-                                      .totalDistance)}m",
+                                      .totalDistance)} miles",
                                   textAlign: TextAlign.center,
                                 ),
                               ),
